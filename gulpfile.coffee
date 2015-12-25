@@ -17,7 +17,7 @@ browserSync = require 'browser-sync'
 reload = browserSync.reload
 
 # Compile source
-gulp.task 'build', ['styles', 'coffeelint', 'coffee']
+gulp.task 'build', ['styles', 'jshint', 'browserify:babel']
 
 # Watch Files For Changes & Reload
 gulp.task 'serve', () ->
@@ -46,14 +46,14 @@ gulp.task 'serve', () ->
         config.path.scss + '**/*.scss'
     ], -> runSequence('styles', reload))
     # $.watch([config.path.js + '**/*.js'], reload)
-    $.watch([config.path.coffee + '**/*.coffee'], -> runSequence('coffeelint', 'coffee', reload))
+    $.watch([config.path.js_src + '**/*.js'], -> runSequence('jshint', 'browserify:babel', reload))
 
 # Build Production Files, the Default Task
 gulp.task 'default', (cb) ->
     runSequence('build', 'serve', cb)
 
 gulp.task 'deploy', (cb) ->
-    runSequence('build', 'coffeelint', 'stylestats', cb)
+    runSequence('build', 'jshint', 'stylestats', cb)
 
 # gulp.task 'minify', (cb) ->
 #     runSequence('minify:html', 'minify:styles', 'minify:scripts', cb)
