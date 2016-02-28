@@ -1,18 +1,9 @@
-(function(win = window, doc = document){
-    'use strict'
-
-    class Test{
-        constructor(){
-            this.initialize();
-        }
-        initialize(name = 'Hello World!'){
-            this.name = name;
-            this.hello(this.name);
-        }
-        hello(str){
-            console.log(str);
-        }
+class Main{
+    constructor(){
     }
 
-    var test = new Test();
-})();
+    init(){
+    }
+}
+var main = new Main();
+main.init();
