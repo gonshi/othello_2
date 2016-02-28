@@ -12,8 +12,8 @@ AUTOPREFIXER_BROWSERS = [
 ]
 
 # Device type
-typeStr = "%type%"
-typeDist = "%type_dir%"
+typeStr = ""
+typeDist = ""
 
 # Directory
 root = "./"
