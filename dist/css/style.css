@@ -219,6 +219,17 @@ a:hover, a:active {
   width: 100%;
 }
 
+.game {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 335px;
+  height: 335px;
+  margin: auto;
+}
+
 @media print {
   * {
     background: transparent !important;
