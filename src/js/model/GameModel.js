@@ -4,8 +4,8 @@ var GameController = require('../controller/GameController');
 var _block_stones = [
     [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0],
+    [0, 0, 1, 2, 0, 0],
+    [0, 0, 2, 1, 0, 0],
     [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0]
 ];
