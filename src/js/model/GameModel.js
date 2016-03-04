@@ -10,7 +10,14 @@ var _block_stones = [
     [0, 0, 0, 0, 0, 0]
 ];
 
-function updateStone(x, y){
+function updateStone(x, y, player){
+    if(_block_stones[y][x] === 0){
+        _block_stones[y][x] = player;
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 module.exports = class GameModel extends EventEmitter{
@@ -20,9 +27,12 @@ module.exports = class GameModel extends EventEmitter{
     }
 
     init(){
-        this.gameController.on('update_stone', (x, y) => {
-            updateStone(x, y);
+        this.gameController.on('put_stone', (x, y, width, height) => {
+            var block_x = Math.floor(x / (width / _block_stones.length));
+            var block_y = Math.floor(y / (height / _block_stones.length));
+            var is_put_succeed = updateStone(block_x, block_y, 1);
             this.emit('change', _block_stones);
+            return is_put_succeed;
         });
 
         this.gameController.init();

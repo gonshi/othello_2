@@ -23,6 +23,7 @@ module.exports = class GameView{
         this.game_context.lineWidth = 2;
 
         // stroke line
+        this.game_context.strokeStyle = '#000';
         for(let i = 0; i <= block_stones.length; i++){
             // vertical
             this.game_context.beginPath();

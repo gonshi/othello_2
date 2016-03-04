@@ -293,13 +293,16 @@ module.exports = function (_EventEmitter) {
             var _this2 = this;
 
             this.$game.on('click', function (e) {
-                _this2.putStone(e);
+                _this2.put(e);
             });
+
+            this.game_width = this.$game.width();
+            this.game_height = this.$game.height();
         }
     }, {
-        key: 'putStone',
-        value: function putStone(e) {
-            this.emit('update_stone', 1, 1);
+        key: 'put',
+        value: function put(e) {
+            this.emit('put_stone', e.offsetX, e.offsetY, this.game_width, this.game_height);
         }
     }]);
 
@@ -322,7 +325,14 @@ var GameController = require('../controller/GameController');
 
 var _block_stones = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 1, 2, 0, 0], [0, 0, 2, 1, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
 
-function updateStone(x, y) {}
+function updateStone(x, y, player) {
+    if (_block_stones[y][x] === 0) {
+        _block_stones[y][x] = player;
+        return true;
+    } else {
+        return false;
+    }
+}
 
 module.exports = function (_EventEmitter) {
     _inherits(GameModel, _EventEmitter);
@@ -341,9 +351,12 @@ module.exports = function (_EventEmitter) {
         value: function init() {
             var _this2 = this;
 
-            this.gameController.on('update_stone', function (x, y) {
-                updateStone(x, y);
+            this.gameController.on('put_stone', function (x, y, width, height) {
+                var block_x = Math.floor(x / (width / _block_stones.length));
+                var block_y = Math.floor(y / (height / _block_stones.length));
+                var is_put_succeed = updateStone(block_x, block_y, 1);
                 _this2.emit('change', _block_stones);
+                return is_put_succeed;
             });
 
             this.gameController.init();
@@ -385,8 +398,9 @@ var Main = function () {
                 _this.render(block_stones);
             });
 
-            this.gameView.init();
             this.gameModel.init();
+            this.gameView.init();
+
             this.gameModel.getBlockStones();
         }
     }, {
@@ -440,6 +454,7 @@ module.exports = function () {
             this.game_context.lineWidth = 2;
 
             // stroke line
+            this.game_context.strokeStyle = '#000';
             for (var i = 0; i <= block_stones.length; i++) {
                 // vertical
                 this.game_context.beginPath();

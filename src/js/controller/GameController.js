@@ -7,10 +7,17 @@ module.exports = class GameController extends EventEmitter{
     }
 
     init(){
-        this.$game.on('click', (e) => {this.putStone(e);});
+        this.$game.on('click', (e) => {this.put(e);});
+
+        this.game_width = this.$game.width();
+        this.game_height = this.$game.height();
     }
 
-    putStone(e){
-        this.emit('update_stone', 1, 1);
+    put(e){
+        this.emit(
+            'put_stone',
+            e.offsetX, e.offsetY,
+            this.game_width, this.game_height
+        );
     }
 }

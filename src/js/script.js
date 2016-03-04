@@ -12,8 +12,9 @@ class Main{
             this.render(block_stones);
         });
 
-        this.gameView.init();
         this.gameModel.init();
+        this.gameView.init();
+
         this.gameModel.getBlockStones();
     }
 
