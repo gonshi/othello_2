@@ -50,10 +50,10 @@ gulp.task 'serve', () ->
 
 # Build Production Files, the Default Task
 gulp.task 'default', (cb) ->
-    runSequence('build', 'serve', cb)
+    runSequence('jade', 'build', 'serve', cb)
 
 gulp.task 'deploy', (cb) ->
-    runSequence('build', 'jshint', 'stylestats', 'copy', cb)
+    runSequence('jade', 'build', 'jshint', 'stylestats', 'copy', cb)
 
 # gulp.task 'minify', (cb) ->
 #     runSequence('minify:html', 'minify:styles', 'minify:scripts', cb)
