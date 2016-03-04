@@ -353,13 +353,13 @@ function reverseStone(x, y, player) {
         var _y = y + VECTOR[i][1];
         var reverse_count = 0;
 
-        while (_block_stones[_y] && _block_stones[_y][_x] && _block_stones[_y][_x] === target) {
+        while (_block_stones[_y] && _block_stones[_y][_x] === target) {
             reverse_count += 1;
             _x += VECTOR[i][0];
             _y += VECTOR[i][1];
         }
 
-        if (reverse_count > 0 && _block_stones[_y][_x] === player) {
+        if (reverse_count > 0 && _block_stones[_y] && _block_stones[_y][_x] === player) {
             var block_x = x + VECTOR[i][0];
             var block_y = y + VECTOR[i][1];
 
@@ -415,7 +415,7 @@ module.exports = function (_EventEmitter) {
         value: function init() {
             var _this2 = this;
 
-            this.player = 0;
+            var is_vs_computer = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
 
             this.gameController.on('put_stone', function (x, y, width, height) {
                 // calc block position x & y
@@ -423,14 +423,48 @@ module.exports = function (_EventEmitter) {
                 var block_y = Math.floor(y / (height / _block_stones.length));
 
                 // check if the player can put on the block position
-                var is_put_succeed = updateStone(block_x, block_y, _this2.player++ % 2 + 1);
+                var is_put_succeed = updateStone(block_x, block_y, 1);
 
                 _this2.emit('change', _block_stones);
                 return is_put_succeed;
             });
 
             this.gameController.init();
+
+            if (is_vs_computer) this.initComputer();
         }
+
+        /**
+         * init computer manipulation.
+         */
+
+    }, {
+        key: 'initComputer',
+        value: function initComputer() {
+            var _this3 = this;
+
+            setInterval(function () {
+                loop: for (var block_y = 0; block_y < _block_stones.length; block_y++) {
+                    for (var block_x = 0; block_x < _block_stones.length; block_x++) {
+                        if (updateStone(block_x, block_y, 2)) {
+                            _this3.emit('change', _block_stones);
+                            break loop;
+                        }
+                    }
+                }
+            }, 2000);
+        }
+
+        /**
+         * @return {is_fin} boolean
+         * return if the game has finished or not.
+         */
+
+    }, {
+        key: 'checkFin',
+        value: function checkFin() {}
+        // TODO
+
 
         /**
          * emit change event, and return block_stones

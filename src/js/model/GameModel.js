@@ -30,13 +30,13 @@ function reverseStone(x, y, player){
         let _y = y + VECTOR[i][1];
         let reverse_count = 0;
 
-        while(_block_stones[_y] && _block_stones[_y][_x] && _block_stones[_y][_x] === target){
+        while(_block_stones[_y] && _block_stones[_y][_x] === target){
             reverse_count += 1;
             _x += VECTOR[i][0];
             _y += VECTOR[i][1];
         }
 
-        if(reverse_count > 0 && _block_stones[_y][_x] === player){
+        if(reverse_count > 0 && _block_stones[_y] && _block_stones[_y][_x] === player){
             let block_x = x + VECTOR[i][0];
             let block_y = y + VECTOR[i][1];
 
@@ -80,22 +80,46 @@ module.exports = class GameModel extends EventEmitter{
     /**
      * set event listenter that update stone status.
      */
-    init(){
-        this.player = 0;
-
+    init(is_vs_computer = true){
         this.gameController.on('put_stone', (x, y, width, height) => {
             // calc block position x & y
             var block_x = Math.floor(x / (width / _block_stones.length));
             var block_y = Math.floor(y / (height / _block_stones.length));
 
             // check if the player can put on the block position
-            var is_put_succeed = updateStone(block_x, block_y, (this.player++ % 2) + 1);
+            var is_put_succeed = updateStone(block_x, block_y, 1);
 
             this.emit('change', _block_stones);
             return is_put_succeed;
         });
 
         this.gameController.init();
+
+        if(is_vs_computer) this.initComputer();
+    }
+
+    /**
+     * init computer manipulation.
+     */
+    initComputer(){
+        setInterval(() => {
+            loop: for(let block_y = 0; block_y < _block_stones.length; block_y++){
+                for(let block_x = 0; block_x < _block_stones.length; block_x++){
+                    if(updateStone(block_x, block_y, 2)){
+                        this.emit('change', _block_stones);
+                        break loop;
+                    }
+                }
+            }
+        }, 2000);
+    }
+
+    /**
+     * @return {is_fin} boolean
+     * return if the game has finished or not.
+     */
+    checkFin(){
+        // TODO
     }
 
     /**
