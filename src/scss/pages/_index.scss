@@ -8,3 +8,24 @@
     height: 335px;
     margin: auto;
 }
+
+.result{
+    display: none;
+    @include absolute(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.7);
+
+    &.is_show{
+        display: block;
+    }
+}
+
+.result__text{
+    @include absolute(0, 0, 0, 0);
+    height: 1em;
+    line-height: 1em;
+    margin: auto;
+    text-align: center;
+    font-size: 56px;
+    letter-spacing: 1px;
+    color: #fff;
+}

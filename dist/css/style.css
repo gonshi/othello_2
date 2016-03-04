@@ -230,6 +230,34 @@ a:hover, a:active {
   margin: auto;
 }
 
+.result {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+.result.is_show {
+  display: block;
+}
+
+.result__text {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1em;
+  line-height: 1em;
+  margin: auto;
+  text-align: center;
+  font-size: 56px;
+  letter-spacing: 1px;
+  color: #fff;
+}
+
 @media print {
   * {
     background: transparent !important;
