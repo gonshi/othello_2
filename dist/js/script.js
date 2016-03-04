@@ -297,6 +297,7 @@ module.exports = function (_EventEmitter) {
         value: function init() {
             var _this2 = this;
 
+            FastClick.attach(this.$game.get(0));
             this.$game.on('click', function (e) {
                 _this2.put(e);
             });
