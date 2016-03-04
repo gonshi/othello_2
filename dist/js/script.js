@@ -455,7 +455,7 @@ module.exports = function (_EventEmitter) {
                         }
                     }
                 }
-            }, 2000);
+            }, 1000);
         }
 
         /**

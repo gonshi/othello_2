@@ -147,4 +147,4 @@ module.exports = class GameModel extends EventEmitter{
     getBlockStones(){
         this.emit('change', _block_stones);
     }
-0}
+}
