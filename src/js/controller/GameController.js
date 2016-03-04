@@ -6,6 +6,9 @@ module.exports = class GameController extends EventEmitter{
         this.$game = $(query);
     }
 
+    /**
+     * set click event on the game board.
+     */
     init(){
         this.$game.on('click', (e) => {this.put(e);});
 
@@ -13,6 +16,9 @@ module.exports = class GameController extends EventEmitter{
         this.game_height = this.$game.height();
     }
 
+    /**
+     * emit put_stone event, and send position information.
+     */
     put(e){
         this.emit(
             'put_stone',
