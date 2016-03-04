@@ -348,6 +348,11 @@ module.exports = function (_EventEmitter) {
 
             this.gameController.init();
         }
+    }, {
+        key: 'getBlockStones',
+        value: function getBlockStones() {
+            this.emit('change', _block_stones);
+        }
     }]);
 
     return GameModel;
@@ -377,11 +382,17 @@ var Main = function () {
             var _this = this;
 
             this.gameModel.on('change', function (block_stones) {
-                _this.gameView.draw();
+                _this.render(block_stones);
             });
 
-            this.gameModel.init();
             this.gameView.init();
+            this.gameModel.init();
+            this.gameModel.getBlockStones();
+        }
+    }, {
+        key: 'render',
+        value: function render(block_stones) {
+            this.gameView.draw(block_stones);
         }
     }]);
 
@@ -392,7 +403,7 @@ var main = new Main();
 main.init();
 
 },{"./model/GameModel":3,"./view/GameView":5}],5:[function(require,module,exports){
-"use strict";
+'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -403,24 +414,62 @@ module.exports = function () {
         _classCallCheck(this, GameView);
 
         this.$game = $(query);
+        this.game_context = this.$game.get(0).getContext('2d');
     }
 
     _createClass(GameView, [{
-        key: "init",
+        key: 'init',
         value: function init() {
+            // settings
+            this.game_context.lineWidth = 2;
+
             this.setSize();
         }
     }, {
-        key: "setSize",
+        key: 'setSize',
         value: function setSize() {
+            this.game_width = this.$game.width();
+            this.game_height = this.$game.height();
+
             this.$game.attr({
-                width: this.$game.width(),
-                height: this.$game.height()
+                width: this.game_width,
+                height: this.game_height
             });
         }
     }, {
-        key: "draw",
-        value: function draw() {}
+        key: 'draw',
+        value: function draw(block_stones) {
+            this.game_context.clearRect(0, 0, this.game_width, this.game_height);
+
+            // stroke line
+            for (var i = 0; i <= block_stones.length; i++) {
+                // vertical
+                this.game_context.beginPath();
+                this.game_context.moveTo(this.game_width / block_stones.length * i, 0);
+                this.game_context.lineTo(this.game_width / block_stones.length * i, this.game_height);
+                this.game_context.stroke();
+                this.game_context.closePath();
+
+                // horizon
+                this.game_context.beginPath();
+                this.game_context.moveTo(0, this.game_height / block_stones.length * i);
+                this.game_context.lineTo(this.game_width, this.game_height / block_stones.length * i);
+                this.game_context.stroke();
+                this.game_context.closePath();
+            }
+
+            // draw stone
+            for (var x = 0; x < block_stones.length; x++) {
+                for (var y = 0; y < block_stones.length; y++) {
+                    if (block_stones[x][y] === 0) {
+                        this.game_context.beginPath();
+                        this.game_context.arc((x + 0.5) * this.game_width / block_stones.length, (y + 0.5) * this.game_height / block_stones.length, 22, 0, 2 * Math.PI);
+                        this.game_context.fill();
+                        this.game_context.closePath();
+                    }
+                }
+            }
+        }
     }]);
 
     return GameView;
