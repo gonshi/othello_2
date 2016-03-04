@@ -287,19 +287,32 @@ module.exports = function (_EventEmitter) {
         return _this;
     }
 
+    /**
+     * set click event on the game board.
+     */
+
+
     _createClass(GameController, [{
         key: 'init',
         value: function init() {
             var _this2 = this;
 
             this.$game.on('click', function (e) {
-                _this2.putStone(e);
+                _this2.put(e);
             });
+
+            this.game_width = this.$game.width();
+            this.game_height = this.$game.height();
         }
+
+        /**
+         * emit put_stone event, and send position information.
+         */
+
     }, {
-        key: 'putStone',
-        value: function putStone(e) {
-            this.emit('update_stone', 1, 1);
+        key: 'put',
+        value: function put(e) {
+            this.emit('put_stone', e.offsetX, e.offsetY, this.game_width, this.game_height);
         }
     }]);
 
@@ -322,7 +335,63 @@ var GameController = require('../controller/GameController');
 
 var _block_stones = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 1, 2, 0, 0], [0, 0, 2, 1, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
 
-function updateStone(x, y) {}
+/**
+ * @param {x} int
+ * @param {y} int
+ * @param {player} int
+ * @return {is_returned} boolean
+ *
+ * check if the put position can be put, and if true, reverse the target stones.
+ */
+function reverseStone(x, y, player) {
+    var VECTOR = [[1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1]];
+    var target = player === 1 ? 2 : 1;
+    var is_reversed = false;
+
+    for (var i = 0; i < VECTOR.length; i++) {
+        var _x = x + VECTOR[i][0];
+        var _y = y + VECTOR[i][1];
+        var reverse_count = 0;
+
+        while (_block_stones[_y] && _block_stones[_y][_x] === target) {
+            reverse_count += 1;
+            _x += VECTOR[i][0];
+            _y += VECTOR[i][1];
+        }
+
+        if (reverse_count > 0 && _block_stones[_y] && _block_stones[_y][_x] === player) {
+            var block_x = x + VECTOR[i][0];
+            var block_y = y + VECTOR[i][1];
+
+            for (var block_i = 0; block_i < reverse_count; block_i++) {
+                _block_stones[block_y][block_x] = player;
+                block_x += VECTOR[i][0];
+                block_y += VECTOR[i][1];
+            }
+            is_reversed = true;
+        }
+    }
+
+    return is_reversed;
+}
+
+/**
+ * @param {x} int
+ * @param {y} int
+ * @param {player} int
+ * @return {is_put_succeed} boolean
+ *
+ * check if the put position is empty, and if true,
+ * check if the stone will reverse opposites.
+ */
+function updateStone(x, y, player) {
+    if (_block_stones[y][x] === 0 && reverseStone(x, y, player)) {
+        _block_stones[y][x] = player;
+        return true;
+    } else {
+        return false;
+    }
+}
 
 module.exports = function (_EventEmitter) {
     _inherits(GameModel, _EventEmitter);
@@ -336,18 +405,71 @@ module.exports = function (_EventEmitter) {
         return _this;
     }
 
+    /**
+     * set event listenter that update stone status.
+     */
+
+
     _createClass(GameModel, [{
         key: 'init',
         value: function init() {
             var _this2 = this;
 
-            this.gameController.on('update_stone', function (x, y) {
-                updateStone(x, y);
+            var is_vs_computer = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+
+            this.gameController.on('put_stone', function (x, y, width, height) {
+                // calc block position x & y
+                var block_x = Math.floor(x / (width / _block_stones.length));
+                var block_y = Math.floor(y / (height / _block_stones.length));
+
+                // check if the player can put on the block position
+                var is_put_succeed = updateStone(block_x, block_y, 1);
+
                 _this2.emit('change', _block_stones);
+                return is_put_succeed;
             });
 
             this.gameController.init();
+
+            if (is_vs_computer) this.initComputer();
         }
+
+        /**
+         * init computer manipulation.
+         */
+
+    }, {
+        key: 'initComputer',
+        value: function initComputer() {
+            var _this3 = this;
+
+            setInterval(function () {
+                loop: for (var block_y = 0; block_y < _block_stones.length; block_y++) {
+                    for (var block_x = 0; block_x < _block_stones.length; block_x++) {
+                        if (updateStone(block_x, block_y, 2)) {
+                            _this3.emit('change', _block_stones);
+                            break loop;
+                        }
+                    }
+                }
+            }, 2000);
+        }
+
+        /**
+         * @return {is_fin} boolean
+         * return if the game has finished or not.
+         */
+
+    }, {
+        key: 'checkFin',
+        value: function checkFin() {}
+        // TODO
+
+
+        /**
+         * emit change event, and return block_stones
+         */
+
     }, {
         key: 'getBlockStones',
         value: function getBlockStones() {
@@ -385,8 +507,9 @@ var Main = function () {
                 _this.render(block_stones);
             });
 
-            this.gameView.init();
             this.gameModel.init();
+            this.gameView.init();
+
             this.gameModel.getBlockStones();
         }
     }, {
@@ -422,6 +545,11 @@ module.exports = function () {
         value: function init() {
             this.setSize();
         }
+
+        /**
+         * set game DOM size
+         */
+
     }, {
         key: 'setSize',
         value: function setSize() {
@@ -433,6 +561,11 @@ module.exports = function () {
                 height: this.game_height
             });
         }
+
+        /**
+         * draw stones and lines.
+         */
+
     }, {
         key: 'draw',
         value: function draw(block_stones) {
@@ -440,6 +573,7 @@ module.exports = function () {
             this.game_context.lineWidth = 2;
 
             // stroke line
+            this.game_context.strokeStyle = '#000';
             for (var i = 0; i <= block_stones.length; i++) {
                 // vertical
                 this.game_context.beginPath();

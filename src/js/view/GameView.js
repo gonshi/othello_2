@@ -8,6 +8,9 @@ module.exports = class GameView{
         this.setSize();
     }
 
+    /**
+     * set game DOM size
+     */
     setSize(){
         this.game_width = this.$game.width();
         this.game_height = this.$game.height();
@@ -18,11 +21,15 @@ module.exports = class GameView{
         });
     }
 
+    /**
+     * draw stones and lines.
+     */
     draw(block_stones){
         this.game_context.clearRect(0, 0, this.game_width, this.game_height);
         this.game_context.lineWidth = 2;
 
         // stroke line
+        this.game_context.strokeStyle = '#000';
         for(let i = 0; i <= block_stones.length; i++){
             // vertical
             this.game_context.beginPath();
