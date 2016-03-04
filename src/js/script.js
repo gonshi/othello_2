@@ -9,11 +9,16 @@ class Main{
 
     init(){
         this.gameModel.on('change', (block_stones) => {
-            this.gameView.draw();
+            this.render(block_stones);
         });
 
-        this.gameModel.init();
         this.gameView.init();
+        this.gameModel.init();
+        this.gameModel.getBlockStones();
+    }
+
+    render(block_stones){
+        this.gameView.draw(block_stones);
     }
 }
 var main = new Main();
