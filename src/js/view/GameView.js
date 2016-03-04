@@ -1,6 +1,7 @@
 module.exports = class GameView{
-    constructor(query){
-        this.$game = $(query);
+    constructor(game_query, result_query){
+        this.$game = $(game_query);
+        this.$result = $(result_query);
         this.game_context = this.$game.get(0).getContext('2d');
     }
 
@@ -74,5 +75,10 @@ module.exports = class GameView{
                 this.game_context.closePath();
             }
         }
+    }
+
+    fin(winner_id){
+        const PLAYER_NAME = ['黒', '白'];
+        this.$result.addClass('is_show').text(`${PLAYER_NAME[winner_id - 1]}の勝ち`);
     }
 }

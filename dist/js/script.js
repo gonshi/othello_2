@@ -297,6 +297,7 @@ module.exports = function (_EventEmitter) {
         value: function init() {
             var _this2 = this;
 
+            FastClick.attach(this.$game.get(0));
             this.$game.on('click', function (e) {
                 _this2.put(e);
             });
@@ -425,6 +426,7 @@ module.exports = function (_EventEmitter) {
                 // check if the player can put on the block position
                 var is_put_succeed = updateStone(block_x, block_y, 1);
 
+                _this2.checkFin();
                 _this2.emit('change', _block_stones);
                 return is_put_succeed;
             });
@@ -447,24 +449,41 @@ module.exports = function (_EventEmitter) {
                 loop: for (var block_y = 0; block_y < _block_stones.length; block_y++) {
                     for (var block_x = 0; block_x < _block_stones.length; block_x++) {
                         if (updateStone(block_x, block_y, 2)) {
+                            _this3.checkFin();
                             _this3.emit('change', _block_stones);
                             break loop;
                         }
                     }
                 }
-            }, 2000);
+            }, 1000);
         }
 
         /**
-         * @return {is_fin} boolean
-         * return if the game has finished or not.
+         * check if the game has finished, and if finished,
+         * emit fin event and send the winner id.
          */
 
     }, {
         key: 'checkFin',
-        value: function checkFin() {}
-        // TODO
+        value: function checkFin() {
+            var player_count = [0, 0, 0];
 
+            for (var block_y = 0; block_y < _block_stones.length; block_y++) {
+                for (var block_x = 0; block_x < _block_stones.length; block_x++) {
+                    player_count[_block_stones[block_y][block_x]] += 1;
+                }
+            }
+
+            for (var i = 0; i < player_count.length; i++) {
+                if (player_count[i] === 0) {
+                    if (player_count[1] > player_count[2]) {
+                        this.emit('fin', 1);
+                    } else {
+                        this.emit('fin', 2);
+                    }
+                }
+            }
+        }
 
         /**
          * emit change event, and return block_stones
@@ -495,7 +514,7 @@ var Main = function () {
         _classCallCheck(this, Main);
 
         this.gameModel = new GameModel();
-        this.gameView = new GameView('.game');
+        this.gameView = new GameView('.game', '.result');
     }
 
     _createClass(Main, [{
@@ -505,6 +524,10 @@ var Main = function () {
 
             this.gameModel.on('change', function (block_stones) {
                 _this.render(block_stones);
+            });
+
+            this.gameModel.on('fin', function (winner_id) {
+                _this.gameView.fin(winner_id);
             });
 
             this.gameModel.init();
@@ -533,10 +556,11 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 module.exports = function () {
-    function GameView(query) {
+    function GameView(game_query, result_query) {
         _classCallCheck(this, GameView);
 
-        this.$game = $(query);
+        this.$game = $(game_query);
+        this.$result = $(result_query);
         this.game_context = this.$game.get(0).getContext('2d');
     }
 
@@ -614,6 +638,12 @@ module.exports = function () {
                     this.game_context.closePath();
                 }
             }
+        }
+    }, {
+        key: 'fin',
+        value: function fin(winner_id) {
+            var PLAYER_NAME = ['黒', '白'];
+            this.$result.addClass('is_show').text(PLAYER_NAME[winner_id - 1] + 'の勝ち');
         }
     }]);
 

@@ -10,6 +10,7 @@ module.exports = class GameController extends EventEmitter{
      * set click event on the game board.
      */
     init(){
+        FastClick.attach(this.$game.get(0));
         this.$game.on('click', (e) => {this.put(e);});
 
         this.game_width = this.$game.width();

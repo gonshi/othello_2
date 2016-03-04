@@ -89,6 +89,7 @@ module.exports = class GameModel extends EventEmitter{
             // check if the player can put on the block position
             var is_put_succeed = updateStone(block_x, block_y, 1);
 
+            this.checkFin();
             this.emit('change', _block_stones);
             return is_put_succeed;
         });
@@ -106,20 +107,38 @@ module.exports = class GameModel extends EventEmitter{
             loop: for(let block_y = 0; block_y < _block_stones.length; block_y++){
                 for(let block_x = 0; block_x < _block_stones.length; block_x++){
                     if(updateStone(block_x, block_y, 2)){
+                        this.checkFin();
                         this.emit('change', _block_stones);
                         break loop;
                     }
                 }
             }
-        }, 2000);
+        }, 1000);
     }
 
     /**
-     * @return {is_fin} boolean
-     * return if the game has finished or not.
+     * check if the game has finished, and if finished,
+     * emit fin event and send the winner id.
      */
     checkFin(){
-        // TODO
+        var player_count = [0, 0, 0];
+
+        for(let block_y = 0; block_y < _block_stones.length; block_y++){
+            for(let block_x = 0; block_x < _block_stones.length; block_x++){
+                player_count[_block_stones[block_y][block_x]] += 1;
+            }
+        }
+
+        for(let i = 0; i < player_count.length; i++){
+            if(player_count[i] === 0){
+                if(player_count[1] > player_count[2]){
+                    this.emit('fin', 1);
+                }
+                else{
+                    this.emit('fin', 2);
+                }
+            }
+        }
     }
 
     /**
