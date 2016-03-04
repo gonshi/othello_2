@@ -361,22 +361,27 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var GameModel = require('./model/GameModel');
+var GameView = require('./view/GameView');
 
 var Main = function () {
     function Main() {
         _classCallCheck(this, Main);
 
         this.gameModel = new GameModel();
+        this.gameView = new GameView('.game');
     }
 
     _createClass(Main, [{
         key: 'init',
         value: function init() {
+            var _this = this;
+
             this.gameModel.on('change', function (block_stones) {
-                console.log(block_stones);
+                _this.gameView.draw();
             });
 
             this.gameModel.init();
+            this.gameView.init();
         }
     }]);
 
@@ -386,4 +391,39 @@ var Main = function () {
 var main = new Main();
 main.init();
 
-},{"./model/GameModel":3}]},{},[4]);
+},{"./model/GameModel":3,"./view/GameView":5}],5:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+module.exports = function () {
+    function GameView(query) {
+        _classCallCheck(this, GameView);
+
+        this.$game = $(query);
+    }
+
+    _createClass(GameView, [{
+        key: "init",
+        value: function init() {
+            this.setSize();
+        }
+    }, {
+        key: "setSize",
+        value: function setSize() {
+            this.$game.attr({
+                width: this.$game.width(),
+                height: this.$game.height()
+            });
+        }
+    }, {
+        key: "draw",
+        value: function draw() {}
+    }]);
+
+    return GameView;
+}();
+
+},{}]},{},[4]);

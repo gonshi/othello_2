@@ -13,4 +13,7 @@ module.exports = class GameView{
             height: this.$game.height()
         });
     }
+
+    draw(){
+    }
 }
