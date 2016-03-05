@@ -436,6 +436,11 @@ module.exports = function (_EventEmitter) {
 
             if (is_vs_computer) this.initComputer();
         }
+
+        /**
+         * search put position automatically for computer.
+         */
+
     }, {
         key: 'searchPut',
         value: function searchPut() {

@@ -99,6 +99,9 @@ module.exports = class GameModel extends EventEmitter{
         if(is_vs_computer) this.initComputer();
     }
 
+    /**
+     * search put position automatically for computer.
+     */
     searchPut(){
         loop: for(let block_y = 0; block_y < _block_stones.length; block_y++){
             for(let block_x = 0; block_x < _block_stones.length; block_x++){
