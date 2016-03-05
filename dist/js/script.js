@@ -333,6 +333,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var EventEmitter = require('eventemitter3');
 var GameController = require('../controller/GameController');
+var Milkcocoa = require('../module/Milkcocoa');
 
 var _block_stones = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 1, 2, 0, 0], [0, 0, 2, 1, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
 
@@ -403,6 +404,7 @@ module.exports = function (_EventEmitter) {
         var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GameModel).call(this));
 
         _this.gameController = new GameController('.game');
+        _this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
         return _this;
     }
 
@@ -413,27 +415,69 @@ module.exports = function (_EventEmitter) {
 
     _createClass(GameModel, [{
         key: 'init',
-        value: function init() {
+        value: function init(player_id, match_id) {
             var _this2 = this;
 
-            var is_vs_computer = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+            if (!player_id) {
+                // play with computer
+                player_id = 1;
+                this.initComputer();
+            }
 
             this.gameController.on('put_stone', function (x, y, width, height) {
                 // calc block position x & y
                 var block_x = Math.floor(x / (width / _block_stones.length));
                 var block_y = Math.floor(y / (height / _block_stones.length));
+                _this2.milkcocoa.send({
+                    event: 'put',
+                    x: block_x,
+                    y: block_y,
+                    player_id: player_id,
+                    match_id: match_id
+                });
+            });
 
-                // check if the player can put on the block position
-                var is_put_succeed = updateStone(block_x, block_y, 1);
-
-                _this2.checkFin();
-                _this2.emit('change', _block_stones);
-                return is_put_succeed;
+            this.milkcocoa.on('send', function (arg) {
+                if (arg.event !== 'put' || arg.match_id !== match_id) return;
+                _this2.putStone(arg.x, arg.y, arg.player_id);
             });
 
             this.gameController.init();
+            this.milkcocoa.init();
+        }
 
-            if (is_vs_computer) this.initComputer();
+        /**
+         * try to put stone on the x, y position.
+         */
+
+    }, {
+        key: 'putStone',
+        value: function putStone(x, y, player_id) {
+            // check if the player can put on the block position
+            var is_put_succeed = updateStone(x, y, player_id);
+
+            if (is_put_succeed) {
+                this.checkFin();
+                this.emit('change', _block_stones);
+            }
+            return is_put_succeed;
+        }
+
+        /**
+         * search put position automatically for computer.
+         */
+
+    }, {
+        key: 'searchPut',
+        value: function searchPut() {
+            var player_id = 2;
+            loop: for (var block_y = 0; block_y < _block_stones.length; block_y++) {
+                for (var block_x = 0; block_x < _block_stones.length; block_x++) {
+                    if (this.putStone(block_x, block_y, player_id)) {
+                        break loop;
+                    }
+                }
+            }
         }
 
         /**
@@ -446,15 +490,7 @@ module.exports = function (_EventEmitter) {
             var _this3 = this;
 
             setInterval(function () {
-                loop: for (var block_y = 0; block_y < _block_stones.length; block_y++) {
-                    for (var block_x = 0; block_x < _block_stones.length; block_x++) {
-                        if (updateStone(block_x, block_y, 2)) {
-                            _this3.checkFin();
-                            _this3.emit('change', _block_stones);
-                            break loop;
-                        }
-                    }
-                }
+                _this3.searchPut();
             }, 1000);
         }
 
@@ -499,7 +535,52 @@ module.exports = function (_EventEmitter) {
     return GameModel;
 }(EventEmitter);
 
-},{"../controller/GameController":2,"eventemitter3":1}],4:[function(require,module,exports){
+},{"../controller/GameController":2,"../module/Milkcocoa":4,"eventemitter3":1}],4:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EventEmitter = require('eventemitter3');
+
+module.exports = function (_EventEmitter) {
+    _inherits(Milkcocoa, _EventEmitter);
+
+    function Milkcocoa(app_id, datastore) {
+        _classCallCheck(this, Milkcocoa);
+
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Milkcocoa).call(this));
+
+        _this.app = new MilkCocoa(app_id + '.mlkcca.com');
+        _this.datastore = _this.app.dataStore(datastore);
+        return _this;
+    }
+
+    _createClass(Milkcocoa, [{
+        key: 'init',
+        value: function init() {
+            var _this2 = this;
+
+            this.datastore.on('send', function (arg) {
+                _this2.emit('send', arg.value);
+            });
+        }
+    }, {
+        key: 'send',
+        value: function send(object) {
+            this.datastore.send(object);
+        }
+    }]);
+
+    return Milkcocoa;
+}(EventEmitter);
+
+},{"eventemitter3":1}],5:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -508,13 +589,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var GameModel = require('./model/GameModel');
 var GameView = require('./view/GameView');
+var Milkcocoa = require('./module/Milkcocoa');
 
 var Main = function () {
     function Main() {
         _classCallCheck(this, Main);
 
         this.gameModel = new GameModel();
-        this.gameView = new GameView('.game', '.result');
+        this.gameView = new GameView('.game');
+        this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
     }
 
     _createClass(Main, [{
@@ -522,17 +605,48 @@ var Main = function () {
         value: function init() {
             var _this = this;
 
+            var player_id;
+            var match_id;
+
             this.gameModel.on('change', function (block_stones) {
                 _this.render(block_stones);
             });
 
             this.gameModel.on('fin', function (winner_id) {
-                _this.gameView.fin(winner_id);
+                _this.gameView.fin('.result', winner_id);
             });
 
-            this.gameModel.init();
-            this.gameView.init();
+            this.milkcocoa.on('send', function (arg) {
+                if (arg.event !== 'start' || arg.match_id !== match_id) return;
+                _this.gameView.hideQR('.qr');
+                _this.gameModel.init(player_id, match_id);
+            });
 
+            this.gameView.init();
+            this.milkcocoa.init();
+
+            if (location.search.match('match')) {
+                if (location.search.match(/match=(.*?)($|\&)/)) {
+                    player_id = 2;
+                    match_id = parseInt(location.search.match(/match=(.*?)($|\&)/)[1]);
+                    this.milkcocoa.send({
+                        event: 'start',
+                        match_id: match_id
+                    });
+                } else {
+                    player_id = 1;
+                    match_id = Math.floor(Math.random() * 1000);
+                    this.gameView.showQR('.qr', match_id);
+                }
+            } else {
+                match_id = Math.floor(Math.random() * 1000);
+                this.milkcocoa.send({
+                    event: 'start',
+                    match_id: match_id
+                });
+            }
+
+            this.gameView.showUsername('.username', player_id);
             this.gameModel.getBlockStones();
         }
     }, {
@@ -548,7 +662,7 @@ var Main = function () {
 var main = new Main();
 main.init();
 
-},{"./model/GameModel":3,"./view/GameView":5}],5:[function(require,module,exports){
+},{"./model/GameModel":3,"./module/Milkcocoa":4,"./view/GameView":6}],6:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -556,11 +670,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 module.exports = function () {
-    function GameView(game_query, result_query) {
+    function GameView(game_query) {
         _classCallCheck(this, GameView);
 
         this.$game = $(game_query);
-        this.$result = $(result_query);
         this.game_context = this.$game.get(0).getContext('2d');
     }
 
@@ -639,15 +752,61 @@ module.exports = function () {
                 }
             }
         }
+
+        /**
+         * show winner information.
+         */
+
     }, {
         key: 'fin',
-        value: function fin(winner_id) {
-            var PLAYER_NAME = ['黒', '白'];
-            this.$result.addClass('is_show').text(PLAYER_NAME[winner_id - 1] + 'の勝ち');
+        value: function fin(result_query, winner_id) {
+            var $result = $(result_query);
+            var PLAYER_NAME = ['', '黒', '白'];
+            $result.addClass('is_show').text(PLAYER_NAME[winner_id] + 'の勝ち');
+        }
+
+        /**
+         * show username in response to the player_id.
+         */
+
+    }, {
+        key: 'showUsername',
+        value: function showUsername(username_query) {
+            var player_id = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+
+            var $username = $(username_query);
+            var PLAYER_NAME = ['', '黒', '白'];
+            $username.html('あなたのコマは<strong>' + PLAYER_NAME[player_id] + '</strong>です。');
+        }
+
+        /**
+         * show qr code for matching.
+         */
+
+    }, {
+        key: 'showQR',
+        value: function showQR(qr_query, match_id) {
+            var $qr = $(qr_query);
+
+            $qr.addClass('is_show');
+            $qr.find('img').attr({
+                src: 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=' + location.origin + location.pathname + '?match=' + match_id
+            });
+        }
+
+        /**
+         * hide qr code.
+         */
+
+    }, {
+        key: 'hideQR',
+        value: function hideQR(qr_query) {
+            var $qr = $(qr_query);
+            $qr.removeClass('is_show');
         }
     }]);
 
     return GameView;
 }();
 
-},{}]},{},[4]);
+},{}]},{},[5]);

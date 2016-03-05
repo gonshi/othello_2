@@ -1,7 +1,6 @@
 module.exports = class GameView{
-    constructor(game_query, result_query){
+    constructor(game_query){
         this.$game = $(game_query);
-        this.$result = $(result_query);
         this.game_context = this.$game.get(0).getContext('2d');
     }
 
@@ -77,8 +76,41 @@ module.exports = class GameView{
         }
     }
 
-    fin(winner_id){
-        const PLAYER_NAME = ['黒', '白'];
-        this.$result.addClass('is_show').text(`${PLAYER_NAME[winner_id - 1]}の勝ち`);
+    /**
+     * show winner information.
+     */
+    fin(result_query, winner_id){
+        var $result = $(result_query);
+        const PLAYER_NAME = ['', '黒', '白'];
+        $result.addClass('is_show').text(`${PLAYER_NAME[winner_id]}の勝ち`);
+    }
+
+    /**
+     * show username in response to the player_id.
+     */
+    showUsername(username_query, player_id = 1){
+        var $username = $(username_query);
+        const PLAYER_NAME = ['', '黒', '白'];
+        $username.html(`あなたのコマは<strong>${PLAYER_NAME[player_id]}</strong>です。`);
+    }
+
+    /**
+     * show qr code for matching.
+     */
+    showQR(qr_query, match_id){
+        var $qr = $(qr_query);
+
+        $qr.addClass('is_show');
+        $qr.find('img').attr({
+            src: `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${location.origin}${location.pathname}?match=${match_id}`
+        });
+    }
+
+    /**
+     * hide qr code.
+     */
+    hideQR(qr_query){
+        var $qr = $(qr_query);
+        $qr.removeClass('is_show');
     }
 }
