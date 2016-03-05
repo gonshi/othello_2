@@ -333,6 +333,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var EventEmitter = require('eventemitter3');
 var GameController = require('../controller/GameController');
+var Milkcocoa = require('../module/Milkcocoa');
 
 var _block_stones = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 1, 2, 0, 0], [0, 0, 2, 1, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
 
@@ -403,6 +404,7 @@ module.exports = function (_EventEmitter) {
         var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GameModel).call(this));
 
         _this.gameController = new GameController('.game');
+        _this.milkcocoa = new Milkcocoa('maxilep2vor', 'datastore');
         return _this;
     }
 
@@ -416,9 +418,11 @@ module.exports = function (_EventEmitter) {
         value: function init(player_id) {
             var _this2 = this;
 
-            if (!player_id) {
+            if (player_id) {
+                this.player_id = player_id;
+            } else {
                 // play with computer
-                player_id = 1;
+                this.player_id = 1;
                 this.initComputer();
             }
 
@@ -426,16 +430,36 @@ module.exports = function (_EventEmitter) {
                 // calc block position x & y
                 var block_x = Math.floor(x / (width / _block_stones.length));
                 var block_y = Math.floor(y / (height / _block_stones.length));
+                _this2.milkcocoa.send({
+                    x: block_x,
+                    y: block_y,
+                    player_id: _this2.player_id
+                });
+            });
 
-                // check if the player can put on the block position
-                var is_put_succeed = updateStone(block_x, block_y, player_id);
-
-                _this2.checkFin();
-                _this2.emit('change', _block_stones);
-                return is_put_succeed;
+            this.milkcocoa.on('send', function (arg) {
+                _this2.putStone(arg.x, arg.y, arg.player_id);
             });
 
             this.gameController.init();
+            this.milkcocoa.init();
+        }
+
+        /**
+         * try to put stone on the x, y position.
+         */
+
+    }, {
+        key: 'putStone',
+        value: function putStone(x, y, player_id) {
+            // check if the player can put on the block position
+            var is_put_succeed = updateStone(x, y, player_id);
+
+            if (is_put_succeed) {
+                this.checkFin();
+                this.emit('change', _block_stones);
+            }
+            return is_put_succeed;
         }
 
         /**
@@ -445,11 +469,10 @@ module.exports = function (_EventEmitter) {
     }, {
         key: 'searchPut',
         value: function searchPut() {
+            var player_id = 2;
             loop: for (var block_y = 0; block_y < _block_stones.length; block_y++) {
                 for (var block_x = 0; block_x < _block_stones.length; block_x++) {
-                    if (updateStone(block_x, block_y, 2)) {
-                        this.checkFin();
-                        this.emit('change', _block_stones);
+                    if (this.putStone(block_x, block_y, player_id)) {
                         break loop;
                     }
                 }
@@ -511,7 +534,52 @@ module.exports = function (_EventEmitter) {
     return GameModel;
 }(EventEmitter);
 
-},{"../controller/GameController":2,"eventemitter3":1}],4:[function(require,module,exports){
+},{"../controller/GameController":2,"../module/Milkcocoa":4,"eventemitter3":1}],4:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EventEmitter = require('eventemitter3');
+
+module.exports = function (_EventEmitter) {
+    _inherits(Milkcocoa, _EventEmitter);
+
+    function Milkcocoa(app_id, datastore) {
+        _classCallCheck(this, Milkcocoa);
+
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Milkcocoa).call(this));
+
+        _this.app = new MilkCocoa(app_id + '.mlkcca.com');
+        _this.datastore = _this.app.dataStore(datastore);
+        return _this;
+    }
+
+    _createClass(Milkcocoa, [{
+        key: 'init',
+        value: function init() {
+            var _this2 = this;
+
+            this.datastore.on('send', function (arg) {
+                _this2.emit('send', arg.value);
+            });
+        }
+    }, {
+        key: 'send',
+        value: function send(object) {
+            this.datastore.send(object);
+        }
+    }]);
+
+    return Milkcocoa;
+}(EventEmitter);
+
+},{"eventemitter3":1}],5:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -545,16 +613,16 @@ var Main = function () {
             if (location.search.match('match')) {
                 if (location.search.match(/match=(.*?)($|\&)/)) {
                     var player_id = 2;
-                    this.gameModel.init(player_id);
+                    //this.gameModel.init(player_id);
                 } else {
-                    var player_id = 1;
-                    var match_id = Math.floor(Math.random() * 1000);
-                    this.gameView.showQR('.qr', match_id);
-                    this.gameModel.init(player_id);
-                }
+                        var player_id = 1;
+                        var match_id = Math.floor(Math.random() * 1000);
+                        this.gameView.showQR('.qr', match_id);
+                        //this.gameModel.init(player_id);
+                    }
             } else {
-                this.gameModel.init(); // play with computer
-            }
+                    this.gameModel.init(); // play with computer
+                }
 
             this.gameView.init();
 
@@ -573,7 +641,7 @@ var Main = function () {
 var main = new Main();
 main.init();
 
-},{"./model/GameModel":3,"./view/GameView":5}],5:[function(require,module,exports){
+},{"./model/GameModel":3,"./view/GameView":6}],6:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -695,4 +763,4 @@ module.exports = function () {
     return GameView;
 }();
 
-},{}]},{},[4]);
+},{}]},{},[5]);

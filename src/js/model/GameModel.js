@@ -1,5 +1,6 @@
 var EventEmitter = require('eventemitter3');
 var GameController = require('../controller/GameController');
+var Milkcocoa = require('../module/Milkcocoa');
 
 var _block_stones = [
     [0, 0, 0, 0, 0, 0],
@@ -75,14 +76,18 @@ module.exports = class GameModel extends EventEmitter{
     constructor(){
         super();
         this.gameController = new GameController('.game');
+        this.milkcocoa = new Milkcocoa('maxilep2vor', 'datastore');
     }
 
     /**
      * set event listenter that update stone status.
      */
     init(player_id){
-        if(!player_id){ // play with computer
-            player_id = 1;
+        if(player_id){
+            this.player_id = player_id;
+        }
+        else{ // play with computer
+            this.player_id = 1;
             this.initComputer();
         }
 
@@ -90,27 +95,43 @@ module.exports = class GameModel extends EventEmitter{
             // calc block position x & y
             var block_x = Math.floor(x / (width / _block_stones.length));
             var block_y = Math.floor(y / (height / _block_stones.length));
+            this.milkcocoa.send({
+                x: block_x,
+                y: block_y,
+                player_id: this.player_id,
+            });
+        });
 
-            // check if the player can put on the block position
-            var is_put_succeed = updateStone(block_x, block_y, player_id);
-
-            this.checkFin();
-            this.emit('change', _block_stones);
-            return is_put_succeed;
+        this.milkcocoa.on('send', (arg) => {
+            this.putStone(arg.x, arg.y, arg.player_id);
         });
 
         this.gameController.init();
+        this.milkcocoa.init();
+    }
+
+    /**
+     * try to put stone on the x, y position.
+     */
+    putStone(x, y, player_id){
+        // check if the player can put on the block position
+        var is_put_succeed = updateStone(x, y, player_id);
+
+        if(is_put_succeed){
+            this.checkFin();
+            this.emit('change', _block_stones);
+        }
+        return is_put_succeed;
     }
 
     /**
      * search put position automatically for computer.
      */
     searchPut(){
+        var player_id = 2;
         loop: for(let block_y = 0; block_y < _block_stones.length; block_y++){
             for(let block_x = 0; block_x < _block_stones.length; block_x++){
-                if(updateStone(block_x, block_y, 2)){
-                    this.checkFin();
-                    this.emit('change', _block_stones);
+                if(this.putStone(block_x, block_y, player_id)){
                     break loop;
                 }
             }
