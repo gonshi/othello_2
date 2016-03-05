@@ -619,7 +619,9 @@ var Main = function () {
             this.milkcocoa.on('send', function (arg) {
                 if (arg.event !== 'start' || arg.match_id !== match_id) return;
                 _this.gameView.hideQR('.qr');
-                _this.gameModel.init(player_id, match_id);
+                _this.gameView.countdown('.countdown', function () {
+                    _this.gameModel.init(player_id, match_id);
+                });
             });
 
             this.gameView.init();
@@ -803,6 +805,36 @@ module.exports = function () {
         value: function hideQR(qr_query) {
             var $qr = $(qr_query);
             $qr.removeClass('is_show');
+        }
+
+        /**
+         * show countdown animation.
+         */
+
+    }, {
+        key: 'countdown',
+        value: function countdown(countdown_query, callback) {
+            var $countdown = $(countdown_query);
+            var count = 3;
+
+            var interval = setInterval(function () {
+                console.log(count);
+                $countdown.removeClass('is_show');
+
+                setTimeout(function () {
+                    if (count > 0) $countdown.text(count);else $countdown.text('START');
+
+                    $countdown.addClass('is_show');
+
+                    if (--count < 0) {
+                        clearInterval(interval);
+                        setTimeout(function () {
+                            $countdown.removeClass('is_show');
+                            callback();
+                        }, 800);
+                    }
+                }, 50);
+            }, 1000);
         }
     }]);
 

@@ -27,4 +27,6 @@ a {
 }
 
 .contents {
+    @include absolute(0, 0, 0, 0);
+    overflow: hidden;
 }

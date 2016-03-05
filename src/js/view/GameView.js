@@ -113,4 +113,32 @@ module.exports = class GameView{
         var $qr = $(qr_query);
         $qr.removeClass('is_show');
     }
+
+    /**
+     * show countdown animation.
+     */
+    countdown(countdown_query, callback){
+        var $countdown = $(countdown_query);
+        var count = 3;
+
+        var interval = setInterval(function(){
+            console.log(count);
+            $countdown.removeClass('is_show');
+
+            setTimeout(function(){
+                if(count > 0) $countdown.text(count);
+                else $countdown.text('START');
+
+                $countdown.addClass('is_show');
+
+                if(--count < 0){
+                    clearInterval(interval);
+                    setTimeout(function(){
+                        $countdown.removeClass('is_show');
+                        callback();
+                    }, 800);
+                }
+            }, 50);
+        }, 1000);
+    }
 }
