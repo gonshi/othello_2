@@ -16,7 +16,20 @@ class Main{
             this.gameView.fin(winner_id);
         });
 
-        this.gameModel.init();
+        if(location.search.match('match')){
+            if(location.search.match(/match=(.*?)($|\&)/)){
+                let player_id = 2;
+                this.gameModel.init(player_id);
+            }
+            else{
+                let player_id = 1;
+                this.gameModel.init(player_id);
+            }
+        }
+        else{
+            this.gameModel.init(); // play with computer
+        }
+
         this.gameView.init();
 
         this.gameModel.getBlockStones();

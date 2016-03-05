@@ -80,7 +80,12 @@ module.exports = class GameModel extends EventEmitter{
     /**
      * set event listenter that update stone status.
      */
-    init(player_id = 1, is_vs_computer = true){
+    init(player_id){
+        if(!player_id){ // play with computer
+            player_id = 1;
+            this.initComputer();
+        }
+
         this.gameController.on('put_stone', (x, y, width, height) => {
             // calc block position x & y
             var block_x = Math.floor(x / (width / _block_stones.length));
@@ -95,8 +100,6 @@ module.exports = class GameModel extends EventEmitter{
         });
 
         this.gameController.init();
-
-        if(is_vs_computer) this.initComputer();
     }
 
     /**

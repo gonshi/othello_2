@@ -413,11 +413,14 @@ module.exports = function (_EventEmitter) {
 
     _createClass(GameModel, [{
         key: 'init',
-        value: function init() {
+        value: function init(player_id) {
             var _this2 = this;
 
-            var player_id = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
-            var is_vs_computer = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
+            if (!player_id) {
+                // play with computer
+                player_id = 1;
+                this.initComputer();
+            }
 
             this.gameController.on('put_stone', function (x, y, width, height) {
                 // calc block position x & y
@@ -433,8 +436,6 @@ module.exports = function (_EventEmitter) {
             });
 
             this.gameController.init();
-
-            if (is_vs_computer) this.initComputer();
         }
 
         /**
@@ -541,7 +542,18 @@ var Main = function () {
                 _this.gameView.fin(winner_id);
             });
 
-            this.gameModel.init();
+            if (location.search.match('match')) {
+                if (location.search.match(/match=(.*?)($|\&)/)) {
+                    var player_id = 2;
+                    this.gameModel.init(player_id);
+                } else {
+                    var player_id = 1;
+                    this.gameModel.init(player_id);
+                }
+            } else {
+                this.gameModel.init(); // play with computer
+            }
+
             this.gameView.init();
 
             this.gameModel.getBlockStones();
