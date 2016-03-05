@@ -404,7 +404,7 @@ module.exports = function (_EventEmitter) {
         var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GameModel).call(this));
 
         _this.gameController = new GameController('.game');
-        _this.milkcocoa = new Milkcocoa('maxilep2vor', 'datastore');
+        _this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
         return _this;
     }
 
@@ -431,6 +431,7 @@ module.exports = function (_EventEmitter) {
                 var block_x = Math.floor(x / (width / _block_stones.length));
                 var block_y = Math.floor(y / (height / _block_stones.length));
                 _this2.milkcocoa.send({
+                    event: 'put',
                     x: block_x,
                     y: block_y,
                     player_id: _this2.player_id
@@ -438,6 +439,7 @@ module.exports = function (_EventEmitter) {
             });
 
             this.milkcocoa.on('send', function (arg) {
+                if (arg.event !== 'put') return;
                 _this2.putStone(arg.x, arg.y, arg.player_id);
             });
 
@@ -588,6 +590,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var GameModel = require('./model/GameModel');
 var GameView = require('./view/GameView');
+var Milkcocoa = require('./module/Milkcocoa');
 
 var Main = function () {
     function Main() {
@@ -595,12 +598,15 @@ var Main = function () {
 
         this.gameModel = new GameModel();
         this.gameView = new GameView('.game', '.result');
+        this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
     }
 
     _createClass(Main, [{
         key: 'init',
         value: function init() {
             var _this = this;
+
+            var player_id;
 
             this.gameModel.on('change', function (block_stones) {
                 _this.render(block_stones);
@@ -610,21 +616,25 @@ var Main = function () {
                 _this.gameView.fin(winner_id);
             });
 
-            if (location.search.match('match')) {
-                if (location.search.match(/match=(.*?)($|\&)/)) {
-                    var player_id = 2;
-                    //this.gameModel.init(player_id);
-                } else {
-                        var player_id = 1;
-                        var match_id = Math.floor(Math.random() * 1000);
-                        this.gameView.showQR('.qr', match_id);
-                        //this.gameModel.init(player_id);
-                    }
-            } else {
-                    this.gameModel.init(); // play with computer
-                }
+            this.milkcocoa.on('send', function (arg) {
+                if (arg.event !== 'start') return;
+                _this.gameModel.init(player_id);
+            });
 
             this.gameView.init();
+            this.milkcocoa.init();
+
+            if (location.search.match('match')) {
+                if (location.search.match(/match=(.*?)($|\&)/)) {
+                    player_id = 2;
+                } else {
+                    player_id = 1;
+                    var match_id = Math.floor(Math.random() * 1000);
+                    this.gameView.showQR('.qr', match_id);
+                }
+            } else {
+                this.milkcocoa.send({ event: 'start' });
+            }
 
             this.gameModel.getBlockStones();
         }
@@ -641,7 +651,7 @@ var Main = function () {
 var main = new Main();
 main.init();
 
-},{"./model/GameModel":3,"./view/GameView":6}],6:[function(require,module,exports){
+},{"./model/GameModel":3,"./module/Milkcocoa":4,"./view/GameView":6}],6:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();

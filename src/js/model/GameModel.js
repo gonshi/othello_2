@@ -76,7 +76,7 @@ module.exports = class GameModel extends EventEmitter{
     constructor(){
         super();
         this.gameController = new GameController('.game');
-        this.milkcocoa = new Milkcocoa('maxilep2vor', 'datastore');
+        this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
     }
 
     /**
@@ -96,6 +96,7 @@ module.exports = class GameModel extends EventEmitter{
             var block_x = Math.floor(x / (width / _block_stones.length));
             var block_y = Math.floor(y / (height / _block_stones.length));
             this.milkcocoa.send({
+                event: 'put',
                 x: block_x,
                 y: block_y,
                 player_id: this.player_id,
@@ -103,6 +104,7 @@ module.exports = class GameModel extends EventEmitter{
         });
 
         this.milkcocoa.on('send', (arg) => {
+            if(arg.event !== 'put') return;
             this.putStone(arg.x, arg.y, arg.player_id);
         });
 

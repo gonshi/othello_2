@@ -1,13 +1,17 @@
 var GameModel = require('./model/GameModel');
 var GameView = require('./view/GameView');
+var Milkcocoa = require('./module/Milkcocoa');
 
 class Main{
     constructor(){
         this.gameModel = new GameModel();
         this.gameView = new GameView('.game', '.result');
+        this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
     }
 
     init(){
+        var player_id;
+
         this.gameModel.on('change', (block_stones) => {
             this.render(block_stones);
         });
@@ -16,23 +20,27 @@ class Main{
             this.gameView.fin(winner_id);
         });
 
+        this.milkcocoa.on('send', (arg) => {
+            if(arg.event !== 'start') return;
+            this.gameModel.init(player_id);
+        });
+
+        this.gameView.init();
+        this.milkcocoa.init();
+
         if(location.search.match('match')){
             if(location.search.match(/match=(.*?)($|\&)/)){
-                let player_id = 2;
-                //this.gameModel.init(player_id);
+                player_id = 2;
             }
             else{
-                let player_id = 1;
+                player_id = 1;
                 let match_id = Math.floor(Math.random() * 1000);
                 this.gameView.showQR('.qr', match_id);
-                //this.gameModel.init(player_id);
             }
         }
         else{
-            this.gameModel.init(); // play with computer
+            this.milkcocoa.send({event: 'start'});
         }
-
-        this.gameView.init();
 
         this.gameModel.getBlockStones();
     }
