@@ -1,7 +1,6 @@
 module.exports = class GameView{
-    constructor(game_query, result_query){
+    constructor(game_query){
         this.$game = $(game_query);
-        this.$result = $(result_query);
         this.game_context = this.$game.get(0).getContext('2d');
     }
 
@@ -80,9 +79,19 @@ module.exports = class GameView{
     /**
      * show winner information.
      */
-    fin(winner_id){
-        const PLAYER_NAME = ['黒', '白'];
-        this.$result.addClass('is_show').text(`${PLAYER_NAME[winner_id - 1]}の勝ち`);
+    fin(result_query, winner_id){
+        var $result = $(result_query);
+        const PLAYER_NAME = ['', '黒', '白'];
+        $result.addClass('is_show').text(`${PLAYER_NAME[winner_id]}の勝ち`);
+    }
+
+    /**
+     * show username in response to the player_id.
+     */
+    showUsername(username_query, player_id = 1){
+        var $username = $(username_query);
+        const PLAYER_NAME = ['', '黒', '白'];
+        $username.html(`あなたのコマは<strong>${PLAYER_NAME[player_id]}</strong>です。`);
     }
 
     /**

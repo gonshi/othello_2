@@ -596,7 +596,7 @@ var Main = function () {
         _classCallCheck(this, Main);
 
         this.gameModel = new GameModel();
-        this.gameView = new GameView('.game', '.result');
+        this.gameView = new GameView('.game');
         this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
     }
 
@@ -613,7 +613,7 @@ var Main = function () {
             });
 
             this.gameModel.on('fin', function (winner_id) {
-                _this.gameView.fin(winner_id);
+                _this.gameView.fin('.result', winner_id);
             });
 
             this.milkcocoa.on('send', function (arg) {
@@ -628,7 +628,7 @@ var Main = function () {
             if (location.search.match('match')) {
                 if (location.search.match(/match=(.*?)($|\&)/)) {
                     player_id = 2;
-                    match_id = location.search.match(/match=(.*?)($|\&)/)[1];
+                    match_id = parseInt(location.search.match(/match=(.*?)($|\&)/)[1]);
                     this.milkcocoa.send({
                         event: 'start',
                         match_id: match_id
@@ -646,6 +646,7 @@ var Main = function () {
                 });
             }
 
+            this.gameView.showUsername('.username', player_id);
             this.gameModel.getBlockStones();
         }
     }, {
@@ -669,11 +670,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 module.exports = function () {
-    function GameView(game_query, result_query) {
+    function GameView(game_query) {
         _classCallCheck(this, GameView);
 
         this.$game = $(game_query);
-        this.$result = $(result_query);
         this.game_context = this.$game.get(0).getContext('2d');
     }
 
@@ -759,9 +759,24 @@ module.exports = function () {
 
     }, {
         key: 'fin',
-        value: function fin(winner_id) {
-            var PLAYER_NAME = ['黒', '白'];
-            this.$result.addClass('is_show').text(PLAYER_NAME[winner_id - 1] + 'の勝ち');
+        value: function fin(result_query, winner_id) {
+            var $result = $(result_query);
+            var PLAYER_NAME = ['', '黒', '白'];
+            $result.addClass('is_show').text(PLAYER_NAME[winner_id] + 'の勝ち');
+        }
+
+        /**
+         * show username in response to the player_id.
+         */
+
+    }, {
+        key: 'showUsername',
+        value: function showUsername(username_query) {
+            var player_id = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
+
+            var $username = $(username_query);
+            var PLAYER_NAME = ['', '黒', '白'];
+            $username.html('あなたのコマは<strong>' + PLAYER_NAME[player_id] + '</strong>です。');
         }
 
         /**

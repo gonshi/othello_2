@@ -5,7 +5,7 @@ var Milkcocoa = require('./module/Milkcocoa');
 class Main{
     constructor(){
         this.gameModel = new GameModel();
-        this.gameView = new GameView('.game', '.result');
+        this.gameView = new GameView('.game');
         this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
     }
 
@@ -18,7 +18,7 @@ class Main{
         });
 
         this.gameModel.on('fin', (winner_id) => {
-            this.gameView.fin(winner_id);
+            this.gameView.fin('.result', winner_id);
         });
 
         this.milkcocoa.on('send', (arg) => {
@@ -33,7 +33,7 @@ class Main{
         if(location.search.match('match')){
             if(location.search.match(/match=(.*?)($|\&)/)){
                 player_id = 2;
-                match_id = location.search.match(/match=(.*?)($|\&)/)[1];
+                match_id = parseInt(location.search.match(/match=(.*?)($|\&)/)[1]);
                 this.milkcocoa.send({
                     event: 'start',
                     match_id: match_id,
@@ -53,6 +53,7 @@ class Main{
             });
         }
 
+        this.gameView.showUsername('.username', player_id);
         this.gameModel.getBlockStones();
     }
 
