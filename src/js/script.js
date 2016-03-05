@@ -22,6 +22,7 @@ class Main{
 
         this.milkcocoa.on('send', (arg) => {
             if(arg.event !== 'start') return;
+            this.gameView.hideQR('.qr');
             this.gameModel.init(player_id);
         });
 

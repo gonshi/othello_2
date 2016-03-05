@@ -618,6 +618,7 @@ var Main = function () {
 
             this.milkcocoa.on('send', function (arg) {
                 if (arg.event !== 'start') return;
+                _this.gameView.hideQR('.qr');
                 _this.gameModel.init(player_id);
             });
 
@@ -767,6 +768,17 @@ module.exports = function () {
             $qr.find('img').attr({
                 src: 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=' + location.origin + '?match=' + match_id
             });
+        }
+
+        /**
+         * hide qr code.
+         */
+
+    }, {
+        key: 'hideQR',
+        value: function hideQR(qr_query) {
+            var $qr = $(qr_query);
+            $qr.removeClass('is_show');
         }
     }]);
 

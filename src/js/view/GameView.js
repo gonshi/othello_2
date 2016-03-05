@@ -96,4 +96,12 @@ module.exports = class GameView{
             src: `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${location.origin}?match=${match_id}`
         });
     }
+
+    /**
+     * hide qr code.
+     */
+    hideQR(qr_query){
+        var $qr = $(qr_query);
+        $qr.removeClass('is_show');
+    }
 }
