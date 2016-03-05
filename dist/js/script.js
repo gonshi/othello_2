@@ -548,6 +548,8 @@ var Main = function () {
                     this.gameModel.init(player_id);
                 } else {
                     var player_id = 1;
+                    var match_id = Math.floor(Math.random() * 1000);
+                    this.gameView.showQR('.qr', match_id);
                     this.gameModel.init(player_id);
                 }
             } else {
@@ -662,11 +664,31 @@ module.exports = function () {
                 }
             }
         }
+
+        /**
+         * show winner information.
+         */
+
     }, {
         key: 'fin',
         value: function fin(winner_id) {
             var PLAYER_NAME = ['黒', '白'];
             this.$result.addClass('is_show').text(PLAYER_NAME[winner_id - 1] + 'の勝ち');
+        }
+
+        /**
+         * show qr code for matching.
+         */
+
+    }, {
+        key: 'showQR',
+        value: function showQR(qr_query, match_id) {
+            var $qr = $(qr_query);
+
+            $qr.addClass('is_show');
+            $qr.find('img').attr({
+                src: 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=' + location.origin + '?match=' + match_id
+            });
         }
     }]);
 

@@ -237,18 +237,6 @@ a:hover, a:active {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-}
-.result.is_show {
-  display: block;
-}
-
-.result {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
   height: 2.5em;
   line-height: 2.5em;
   margin: auto;
@@ -256,6 +244,45 @@ a:hover, a:active {
   font-size: 56px;
   letter-spacing: 1px;
   color: #fff;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+.result.is_show {
+  display: block;
+}
+
+.qr {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+.qr.is_show {
+  display: block;
+}
+.qr:before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  color: #fff;
+  text-align: center;
+  font-size: 20px;
+  -webkit-transform: translateY(-220px);
+      -ms-transform: translateY(-220px);
+          transform: translateY(-220px);
+  white-space: pre;
+  content: "対戦相手の方がこのQRコードを\A読みこむとゲーム開始します。";
+}
+.qr img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
 }
 
 @media print {

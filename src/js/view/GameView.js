@@ -77,8 +77,23 @@ module.exports = class GameView{
         }
     }
 
+    /**
+     * show winner information.
+     */
     fin(winner_id){
         const PLAYER_NAME = ['黒', '白'];
         this.$result.addClass('is_show').text(`${PLAYER_NAME[winner_id - 1]}の勝ち`);
+    }
+
+    /**
+     * show qr code for matching.
+     */
+    showQR(qr_query, match_id){
+        var $qr = $(qr_query);
+
+        $qr.addClass('is_show');
+        $qr.find('img').attr({
+            src: `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${location.origin}?match=${match_id}`
+        });
     }
 }

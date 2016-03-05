@@ -23,6 +23,8 @@ class Main{
             }
             else{
                 let player_id = 1;
+                let match_id = Math.floor(Math.random() * 1000);
+                this.gameView.showQR('.qr', match_id);
                 this.gameModel.init(player_id);
             }
         }
