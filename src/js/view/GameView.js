@@ -93,7 +93,7 @@ module.exports = class GameView{
 
         $qr.addClass('is_show');
         $qr.find('img').attr({
-            src: `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${location.origin}?match=${match_id}`
+            src: `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${location.origin}${location.pathname}?match=${match_id}`
         });
     }
 

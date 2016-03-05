@@ -32,6 +32,7 @@ class Main{
         if(location.search.match('match')){
             if(location.search.match(/match=(.*?)($|\&)/)){
                 player_id = 2;
+                this.milkcocoa.send({event: 'start'});
             }
             else{
                 player_id = 1;

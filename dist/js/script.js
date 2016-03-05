@@ -628,6 +628,7 @@ var Main = function () {
             if (location.search.match('match')) {
                 if (location.search.match(/match=(.*?)($|\&)/)) {
                     player_id = 2;
+                    this.milkcocoa.send({ event: 'start' });
                 } else {
                     player_id = 1;
                     var match_id = Math.floor(Math.random() * 1000);
@@ -766,7 +767,7 @@ module.exports = function () {
 
             $qr.addClass('is_show');
             $qr.find('img').attr({
-                src: 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=' + location.origin + '?match=' + match_id
+                src: 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=' + location.origin + location.pathname + '?match=' + match_id
             });
         }
 
