@@ -415,14 +415,12 @@ module.exports = function (_EventEmitter) {
 
     _createClass(GameModel, [{
         key: 'init',
-        value: function init(player_id) {
+        value: function init(player_id, match_id) {
             var _this2 = this;
 
-            if (player_id) {
-                this.player_id = player_id;
-            } else {
+            if (!player_id) {
                 // play with computer
-                this.player_id = 1;
+                player_id = 1;
                 this.initComputer();
             }
 
@@ -434,12 +432,13 @@ module.exports = function (_EventEmitter) {
                     event: 'put',
                     x: block_x,
                     y: block_y,
-                    player_id: _this2.player_id
+                    player_id: player_id,
+                    match_id: match_id
                 });
             });
 
             this.milkcocoa.on('send', function (arg) {
-                if (arg.event !== 'put') return;
+                if (arg.event !== 'put' || arg.match_id !== match_id) return;
                 _this2.putStone(arg.x, arg.y, arg.player_id);
             });
 
@@ -607,6 +606,7 @@ var Main = function () {
             var _this = this;
 
             var player_id;
+            var match_id;
 
             this.gameModel.on('change', function (block_stones) {
                 _this.render(block_stones);
@@ -617,9 +617,9 @@ var Main = function () {
             });
 
             this.milkcocoa.on('send', function (arg) {
-                if (arg.event !== 'start') return;
+                if (arg.event !== 'start' || arg.match_id !== match_id) return;
                 _this.gameView.hideQR('.qr');
-                _this.gameModel.init(player_id);
+                _this.gameModel.init(player_id, match_id);
             });
 
             this.gameView.init();
@@ -628,14 +628,22 @@ var Main = function () {
             if (location.search.match('match')) {
                 if (location.search.match(/match=(.*?)($|\&)/)) {
                     player_id = 2;
-                    this.milkcocoa.send({ event: 'start' });
+                    match_id = location.search.match(/match=(.*?)($|\&)/)[1];
+                    this.milkcocoa.send({
+                        event: 'start',
+                        match_id: match_id
+                    });
                 } else {
                     player_id = 1;
-                    var match_id = Math.floor(Math.random() * 1000);
+                    match_id = Math.floor(Math.random() * 1000);
                     this.gameView.showQR('.qr', match_id);
                 }
             } else {
-                this.milkcocoa.send({ event: 'start' });
+                match_id = Math.floor(Math.random() * 1000);
+                this.milkcocoa.send({
+                    event: 'start',
+                    match_id: match_id
+                });
             }
 
             this.gameModel.getBlockStones();

@@ -11,6 +11,7 @@ class Main{
 
     init(){
         var player_id;
+        var match_id;
 
         this.gameModel.on('change', (block_stones) => {
             this.render(block_stones);
@@ -21,9 +22,9 @@ class Main{
         });
 
         this.milkcocoa.on('send', (arg) => {
-            if(arg.event !== 'start') return;
+            if(arg.event !== 'start' || arg.match_id !== match_id) return;
             this.gameView.hideQR('.qr');
-            this.gameModel.init(player_id);
+            this.gameModel.init(player_id, match_id);
         });
 
         this.gameView.init();
@@ -32,16 +33,24 @@ class Main{
         if(location.search.match('match')){
             if(location.search.match(/match=(.*?)($|\&)/)){
                 player_id = 2;
-                this.milkcocoa.send({event: 'start'});
+                match_id = location.search.match(/match=(.*?)($|\&)/)[1];
+                this.milkcocoa.send({
+                    event: 'start',
+                    match_id: match_id,
+                });
             }
             else{
                 player_id = 1;
-                let match_id = Math.floor(Math.random() * 1000);
+                match_id = Math.floor(Math.random() * 1000);
                 this.gameView.showQR('.qr', match_id);
             }
         }
         else{
-            this.milkcocoa.send({event: 'start'});
+            match_id = Math.floor(Math.random() * 1000);
+            this.milkcocoa.send({
+                event: 'start',
+                match_id: match_id,
+            });
         }
 
         this.gameModel.getBlockStones();

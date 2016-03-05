@@ -82,12 +82,9 @@ module.exports = class GameModel extends EventEmitter{
     /**
      * set event listenter that update stone status.
      */
-    init(player_id){
-        if(player_id){
-            this.player_id = player_id;
-        }
-        else{ // play with computer
-            this.player_id = 1;
+    init(player_id, match_id){
+        if(!player_id){ // play with computer
+            player_id = 1;
             this.initComputer();
         }
 
@@ -99,12 +96,13 @@ module.exports = class GameModel extends EventEmitter{
                 event: 'put',
                 x: block_x,
                 y: block_y,
-                player_id: this.player_id,
+                player_id: player_id,
+                match_id: match_id,
             });
         });
 
         this.milkcocoa.on('send', (arg) => {
-            if(arg.event !== 'put') return;
+            if(arg.event !== 'put' || arg.match_id !== match_id) return;
             this.putStone(arg.x, arg.y, arg.player_id);
         });
 
