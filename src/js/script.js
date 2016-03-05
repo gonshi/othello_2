@@ -24,7 +24,9 @@ class Main{
         this.milkcocoa.on('send', (arg) => {
             if(arg.event !== 'start' || arg.match_id !== match_id) return;
             this.gameView.hideQR('.qr');
-            this.gameModel.init(player_id, match_id);
+            this.gameView.countdown('.countdown', () => {
+                this.gameModel.init(player_id, match_id);
+            });
         });
 
         this.gameView.init();
