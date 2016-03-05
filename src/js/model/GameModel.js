@@ -80,14 +80,14 @@ module.exports = class GameModel extends EventEmitter{
     /**
      * set event listenter that update stone status.
      */
-    init(is_vs_computer = true){
+    init(player_id = 1, is_vs_computer = true){
         this.gameController.on('put_stone', (x, y, width, height) => {
             // calc block position x & y
             var block_x = Math.floor(x / (width / _block_stones.length));
             var block_y = Math.floor(y / (height / _block_stones.length));
 
             // check if the player can put on the block position
-            var is_put_succeed = updateStone(block_x, block_y, 1);
+            var is_put_succeed = updateStone(block_x, block_y, player_id);
 
             this.checkFin();
             this.emit('change', _block_stones);

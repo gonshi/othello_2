@@ -416,7 +416,8 @@ module.exports = function (_EventEmitter) {
         value: function init() {
             var _this2 = this;
 
-            var is_vs_computer = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+            var player_id = arguments.length <= 0 || arguments[0] === undefined ? 1 : arguments[0];
+            var is_vs_computer = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
 
             this.gameController.on('put_stone', function (x, y, width, height) {
                 // calc block position x & y
@@ -424,7 +425,7 @@ module.exports = function (_EventEmitter) {
                 var block_y = Math.floor(y / (height / _block_stones.length));
 
                 // check if the player can put on the block position
-                var is_put_succeed = updateStone(block_x, block_y, 1);
+                var is_put_succeed = updateStone(block_x, block_y, player_id);
 
                 _this2.checkFin();
                 _this2.emit('change', _block_stones);
