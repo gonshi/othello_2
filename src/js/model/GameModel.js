@@ -99,21 +99,23 @@ module.exports = class GameModel extends EventEmitter{
         if(is_vs_computer) this.initComputer();
     }
 
+    searchPut(){
+        loop: for(let block_y = 0; block_y < _block_stones.length; block_y++){
+            for(let block_x = 0; block_x < _block_stones.length; block_x++){
+                if(updateStone(block_x, block_y, 2)){
+                    this.checkFin();
+                    this.emit('change', _block_stones);
+                    break loop;
+                }
+            }
+        }
+    }
+
     /**
      * init computer manipulation.
      */
     initComputer(){
-        setInterval(() => {
-            loop: for(let block_y = 0; block_y < _block_stones.length; block_y++){
-                for(let block_x = 0; block_x < _block_stones.length; block_x++){
-                    if(updateStone(block_x, block_y, 2)){
-                        this.checkFin();
-                        this.emit('change', _block_stones);
-                        break loop;
-                    }
-                }
-            }
-        }, 1000);
+        setInterval(() => {this.searchPut();}, 1000);
     }
 
     /**

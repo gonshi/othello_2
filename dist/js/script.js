@@ -436,6 +436,19 @@ module.exports = function (_EventEmitter) {
 
             if (is_vs_computer) this.initComputer();
         }
+    }, {
+        key: 'searchPut',
+        value: function searchPut() {
+            loop: for (var block_y = 0; block_y < _block_stones.length; block_y++) {
+                for (var block_x = 0; block_x < _block_stones.length; block_x++) {
+                    if (updateStone(block_x, block_y, 2)) {
+                        this.checkFin();
+                        this.emit('change', _block_stones);
+                        break loop;
+                    }
+                }
+            }
+        }
 
         /**
          * init computer manipulation.
@@ -447,15 +460,7 @@ module.exports = function (_EventEmitter) {
             var _this3 = this;
 
             setInterval(function () {
-                loop: for (var block_y = 0; block_y < _block_stones.length; block_y++) {
-                    for (var block_x = 0; block_x < _block_stones.length; block_x++) {
-                        if (updateStone(block_x, block_y, 2)) {
-                            _this3.checkFin();
-                            _this3.emit('change', _block_stones);
-                            break loop;
-                        }
-                    }
-                }
+                _this3.searchPut();
             }, 1000);
         }
 
