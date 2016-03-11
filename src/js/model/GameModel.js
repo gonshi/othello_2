@@ -11,6 +11,8 @@ var _block_stones = [
     [0, 0, 0, 0, 0, 0]
 ];
 
+var _can_put = true;
+
 /**
  * @param {x} int
  * @param {y} int
@@ -103,7 +105,11 @@ module.exports = class GameModel extends EventEmitter{
 
         this.milkcocoa.on('send', (arg) => {
             if(arg.event !== 'put' || arg.match_id !== match_id) return;
-            this.putStone(arg.x, arg.y, arg.player_id);
+
+            if(_can_put){
+                let is_put_succeed = this.putStone(arg.x, arg.y, arg.player_id);
+                if(!is_put_succeed && arg.player_id === player_id) this.wait('.penalty', 2000);
+            }
         });
 
         this.gameController.init();
@@ -168,6 +174,21 @@ module.exports = class GameModel extends EventEmitter{
                 }
             }
         }
+    }
+
+    /**
+     * wait required seconds.
+     * it's usually called when misstouched.
+     */
+    wait(penalty_query, seconds){
+        let $penalty = $(penalty_query);
+        $penalty.addClass('is_show');
+
+        _can_put = false;
+        setTimeout(function(){
+            $penalty.removeClass('is_show');
+            _can_put = true;
+        }, seconds);
     }
 
     /**

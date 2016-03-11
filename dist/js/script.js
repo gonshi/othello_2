@@ -337,6 +337,8 @@ var Milkcocoa = require('../module/Milkcocoa');
 
 var _block_stones = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 1, 2, 0, 0], [0, 0, 2, 1, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
 
+var _can_put = true;
+
 /**
  * @param {x} int
  * @param {y} int
@@ -439,7 +441,11 @@ module.exports = function (_EventEmitter) {
 
             this.milkcocoa.on('send', function (arg) {
                 if (arg.event !== 'put' || arg.match_id !== match_id) return;
-                _this2.putStone(arg.x, arg.y, arg.player_id);
+
+                if (_can_put) {
+                    var is_put_succeed = _this2.putStone(arg.x, arg.y, arg.player_id);
+                    if (!is_put_succeed && arg.player_id === player_id) _this2.wait('.penalty', 2000);
+                }
             });
 
             this.gameController.init();
@@ -519,6 +525,24 @@ module.exports = function (_EventEmitter) {
                     }
                 }
             }
+        }
+
+        /**
+         * wait required seconds.
+         * it's usually called when misstouched.
+         */
+
+    }, {
+        key: 'wait',
+        value: function wait(penalty_query, seconds) {
+            var $penalty = $(penalty_query);
+            $penalty.addClass('is_show');
+
+            _can_put = false;
+            setTimeout(function () {
+                $penalty.removeClass('is_show');
+                _can_put = true;
+            }, seconds);
         }
 
         /**

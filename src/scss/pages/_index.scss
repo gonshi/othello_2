@@ -41,6 +41,18 @@
     }
 }
 
+.penalty{
+    display: none;
+    @include absolute(90px, 0, '', 0);
+    text-align: center;
+    font-size: 24px;
+    color: red;
+
+    &.is_show{
+        display: block;
+    }
+}
+
 .countdown{
     display: none;
     @include absolute(0, 0, 0, 0);
