@@ -411,7 +411,7 @@ a:hover, a:active {
 .penalty {
   display: none;
   position: absolute;
-  top: 90px;
+  bottom: 50px;
   left: 0;
   right: 0;
   text-align: center;
