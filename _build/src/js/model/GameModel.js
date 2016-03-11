@@ -94,22 +94,23 @@ module.exports = class GameModel extends EventEmitter{
             // calc block position x & y
             var block_x = Math.floor(x / (width / _block_stones.length));
             var block_y = Math.floor(y / (height / _block_stones.length));
-            this.milkcocoa.send({
-                event: 'put',
-                x: block_x,
-                y: block_y,
-                player_id: player_id,
-                match_id: match_id,
-            });
+
+            if(_can_put){
+                this.milkcocoa.send({
+                    event: 'put',
+                    x: block_x,
+                    y: block_y,
+                    player_id: player_id,
+                    match_id: match_id,
+                });
+            }
         });
 
         this.milkcocoa.on('send', (arg) => {
             if(arg.event !== 'put' || arg.match_id !== match_id) return;
 
-            if(_can_put){
-                let is_put_succeed = this.putStone(arg.x, arg.y, arg.player_id);
-                if(!is_put_succeed && arg.player_id === player_id) this.wait('.penalty', 2000);
-            }
+            let is_put_succeed = this.putStone(arg.x, arg.y, arg.player_id);
+            if(!is_put_succeed && arg.player_id === player_id) this.wait('.penalty', 2000);
         });
 
         this.gameController.init();

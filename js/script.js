@@ -430,22 +430,23 @@ module.exports = function (_EventEmitter) {
                 // calc block position x & y
                 var block_x = Math.floor(x / (width / _block_stones.length));
                 var block_y = Math.floor(y / (height / _block_stones.length));
-                _this2.milkcocoa.send({
-                    event: 'put',
-                    x: block_x,
-                    y: block_y,
-                    player_id: player_id,
-                    match_id: match_id
-                });
+
+                if (_can_put) {
+                    _this2.milkcocoa.send({
+                        event: 'put',
+                        x: block_x,
+                        y: block_y,
+                        player_id: player_id,
+                        match_id: match_id
+                    });
+                }
             });
 
             this.milkcocoa.on('send', function (arg) {
                 if (arg.event !== 'put' || arg.match_id !== match_id) return;
 
-                if (_can_put) {
-                    var is_put_succeed = _this2.putStone(arg.x, arg.y, arg.player_id);
-                    if (!is_put_succeed && arg.player_id === player_id) _this2.wait('.penalty', 2000);
-                }
+                var is_put_succeed = _this2.putStone(arg.x, arg.y, arg.player_id);
+                if (!is_put_succeed && arg.player_id === player_id) _this2.wait('.penalty', 2000);
             });
 
             this.gameController.init();
