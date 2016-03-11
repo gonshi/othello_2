@@ -818,7 +818,6 @@ module.exports = function () {
             var count = 3;
 
             var interval = setInterval(function () {
-                console.log(count);
                 $countdown.removeClass('is_show');
 
                 setTimeout(function () {
