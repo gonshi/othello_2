@@ -45,10 +45,10 @@ module.exports = class GameView{
                 var stone_img;
                 switch(block_stones[y][x]){
                     case 1:
-                        stone_img = this.stone_img.black;
+                        stone_img = this.stone_img.white;
                         break;
                     case 2:
-                        stone_img = this.stone_img.white;
+                        stone_img = this.stone_img.black;
                         break;
                     default:
                         stone_img = null;
@@ -70,10 +70,9 @@ module.exports = class GameView{
     /**
      * show winner information.
      */
-    fin(result_query, winner_id){
+    fin(result_query, is_win){
         var $result = $(result_query);
-        const PLAYER_NAME = ['', '黒', '白'];
-        $result.addClass('is_show').text(`${PLAYER_NAME[winner_id]}の勝ち`);
+        $result.attr({'data-is-win': is_win})
     }
 
     /**

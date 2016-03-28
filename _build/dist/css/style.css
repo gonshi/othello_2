@@ -564,17 +564,23 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 2.5em;
-  line-height: 2.5em;
   margin: auto;
-  text-align: center;
-  font-size: 56px;
-  letter-spacing: 1px;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.7);
 }
-.result.is_show {
+.result[data-is-win="true"] {
   display: block;
+  background-image: url(../img/sprite.png);
+  background-position: 0px -357.5px;
+  width: 263.5px;
+  height: 220px;
+  background-size: 769.5px 577.5px;
+}
+.result[data-is-win="false"] {
+  display: block;
+  background-image: url(../img/sprite.png);
+  background-position: -359px 0px;
+  width: 281.5px;
+  height: 220.5px;
+  background-size: 769.5px 577.5px;
 }
 
 .qr {

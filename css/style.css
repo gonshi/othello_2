@@ -228,6 +228,36 @@ a:hover, a:active {
   width: 100%;
 }
 
+/*
+SCSS variables are information about icon's compiled state, stored under its original file name
+
+.icon-home {
+  width: $icon-home-width;
+}
+
+The large array-like variables contain all information about a single icon
+$icon-home: x y offset_x offset_y width height total_width total_height image_path;
+
+At the bottom of this section, we provide information about the spritesheet itself
+$spritesheet: width height image $spritesheet-sprites;
+*/
+/*
+The provided mixins are intended to be used with the array-like variables
+
+.icon-home {
+  @include sprite-width($icon-home);
+}
+
+.icon-email {
+  @include sprite($icon-email);
+}
+*/
+/*
+The `sprites` mixin generates identical output to the CSS template
+  but can be overridden inside of SCSS
+
+@include sprites($spritesheet-sprites);
+*/
 @-webkit-keyframes slide {
   0% {
     -webkit-transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -500, 0, 0, 1);
@@ -306,7 +336,6 @@ a:hover, a:active {
             transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   }
 }
-
 @keyframes slide {
   0% {
     -webkit-transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -500, 0, 0, 1);
@@ -385,27 +414,89 @@ a:hover, a:active {
             transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   }
 }
+body {
+  background-image: url("../img/bg.jpg");
+  background-size: cover;
+}
+
+.userstone[data-id="1"] {
+  left: 10px;
+  background-image: url(../img/sprite.png);
+  background-position: -399.5px -357.5px;
+  width: 107px;
+  height: 157.5px;
+  background-size: 769.5px 577.5px;
+}
+.userstone[data-id="1"] .userstone__title {
+  background-image: url(../img/sprite.png);
+  background-position: -693px -536px;
+  width: 48.5px;
+  height: 15.5px;
+  background-size: 769.5px 577.5px;
+}
+.userstone[data-id="1"] .userstone__pic {
+  background-image: url(../img/sprite.png);
+  background-position: -359px -294.5px;
+  width: 49.5px;
+  height: 53px;
+  background-size: 769.5px 577.5px;
+}
+.userstone[data-id="2"] {
+  right: 10px;
+  background-image: url(../img/sprite.png);
+  background-position: -642.5px -186px;
+  width: 112px;
+  height: 162.5px;
+  background-size: 769.5px 577.5px;
+}
+.userstone[data-id="2"] .userstone__title {
+  background-image: url(../img/sprite.png);
+  background-position: -642.5px -536px;
+  width: 48.5px;
+  height: 15.5px;
+  background-size: 769.5px 577.5px;
+}
+.userstone[data-id="2"] .userstone__pic {
+  background-image: url(../img/sprite.png);
+  background-position: -554px -222.5px;
+  width: 49.5px;
+  height: 53.5px;
+  background-size: 769.5px 577.5px;
+}
+
+.userstone {
+  position: absolute;
+  top: -60px;
+}
+.userstone.is_me {
+  top: -20px;
+}
+
+.userstone__title {
+  position: absolute;
+  top: 35px;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+.userstone__pic {
+  position: absolute;
+  top: 65px;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
 .game {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  width: 335px;
-  height: 335px;
+  width: 375px;
+  height: 375px;
   margin: auto;
-}
-
-.username {
-  position: absolute;
-  top: 50px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 20px;
-}
-.username strong {
-  font-weight: bold;
 }
 
 .penalty {
@@ -434,12 +525,36 @@ a:hover, a:active {
   margin: auto;
   text-align: center;
   font-size: 96px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-indent: 110%;
   text-shadow: 4px 0px 0px #fff, -3.49322px -1.9487px 0px #fff, 2.10128px 3.40362px 0px #fff, -0.17692px -3.99608px 0px #fff, -1.7923px 3.57598px 0px #fff, 3.30734px -2.24976px 0px #fff, -3.98436px 0.35348px 0px #fff, 3.65176px 1.63238px 0px #fff, -2.39384px -3.20462px 0px #fff, 0.52934px 3.96482px 0px #fff, 1.46928px -3.72038px 0px #fff, -3.0956px 2.53324px 0px #fff, 3.93752px -0.70418px 0px #fff, -3.78172px -1.3033px 0px #fff, 2.66766px 2.98054px 0px #fff, -0.87764px -3.90254px 0px #fff, -1.13476px 3.83566px 0px #fff;
 }
 .countdown.is_show {
   display: block;
   -webkit-animation: slide 0.5s linear both;
           animation: slide 0.5s linear both;
+}
+.countdown[data-id="1"] {
+  background-image: url(../img/sprite.png);
+  background-position: -642.5px -350.5px;
+  width: 97.5px;
+  height: 183.5px;
+  background-size: 769.5px 577.5px;
+}
+.countdown[data-id="2"] {
+  background-image: url(../img/sprite.png);
+  background-position: -265.5px -357.5px;
+  width: 132px;
+  height: 181px;
+  background-size: 769.5px 577.5px;
+}
+.countdown[data-id="3"] {
+  background-image: url(../img/sprite.png);
+  background-position: -642.5px 0px;
+  width: 127px;
+  height: 184px;
+  background-size: 769.5px 577.5px;
 }
 
 .result {
@@ -449,17 +564,23 @@ a:hover, a:active {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 2.5em;
-  line-height: 2.5em;
   margin: auto;
-  text-align: center;
-  font-size: 56px;
-  letter-spacing: 1px;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.7);
 }
-.result.is_show {
+.result[data-is-win="true"] {
   display: block;
+  background-image: url(../img/sprite.png);
+  background-position: 0px -357.5px;
+  width: 263.5px;
+  height: 220px;
+  background-size: 769.5px 577.5px;
+}
+.result[data-is-win="false"] {
+  display: block;
+  background-image: url(../img/sprite.png);
+  background-position: -359px 0px;
+  width: 281.5px;
+  height: 220.5px;
+  background-size: 769.5px 577.5px;
 }
 
 .qr {

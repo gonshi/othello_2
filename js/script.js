@@ -634,11 +634,17 @@ var Main = function () {
             var match_id;
 
             this.gameModel.on('change', function (block_stones) {
-                _this.render(block_stones);
+                _this.block_stones = block_stones;
+            });
+
+            requestAnimationFrame(function () {
+                _this.render();
             });
 
             this.gameModel.on('fin', function (winner_id) {
-                _this.gameView.fin('.result', winner_id);
+                if (!player_id) player_id = 1; // when played with computer
+                var is_win = winner_id === player_id;
+                _this.gameView.fin('.result', is_win);
             });
 
             this.milkcocoa.on('send', function (arg) {
@@ -673,13 +679,18 @@ var Main = function () {
                 });
             }
 
-            this.gameView.showUsername('.username', player_id);
+            this.gameView.showUserstone('.userstone', player_id);
             this.gameModel.getBlockStones();
         }
     }, {
         key: 'render',
-        value: function render(block_stones) {
-            this.gameView.draw(block_stones);
+        value: function render() {
+            var _this2 = this;
+
+            this.gameView.draw(this.block_stones);
+            requestAnimationFrame(function () {
+                _this2.render();
+            });
         }
     }]);
 
@@ -708,6 +719,16 @@ module.exports = function () {
         key: 'init',
         value: function init() {
             this.setSize();
+
+            this.stone_img = {
+                black: new Image(),
+                white: new Image()
+            };
+            this.stone_img.black.src = 'img/stone_black.png';
+            this.stone_img.white.src = 'img/stone_white.png';
+
+            this.board_img = new Image();
+            this.board_img.src = 'img/board.jpg';
         }
 
         /**
@@ -734,48 +755,29 @@ module.exports = function () {
         key: 'draw',
         value: function draw(block_stones) {
             this.game_context.clearRect(0, 0, this.game_width, this.game_height);
-            this.game_context.lineWidth = 2;
 
-            // stroke line
-            this.game_context.strokeStyle = '#000';
-            for (var i = 0; i <= block_stones.length; i++) {
-                // vertical
-                this.game_context.beginPath();
-                this.game_context.moveTo(this.game_width / block_stones.length * i, 0);
-                this.game_context.lineTo(this.game_width / block_stones.length * i, this.game_height);
-                this.game_context.stroke();
-                this.game_context.closePath();
-
-                // horizon
-                this.game_context.beginPath();
-                this.game_context.moveTo(0, this.game_height / block_stones.length * i);
-                this.game_context.lineTo(this.game_width, this.game_height / block_stones.length * i);
-                this.game_context.stroke();
-                this.game_context.closePath();
-            }
+            this.game_context.drawImage(this.board_img, 0, 0, this.board_img.width / 2, this.board_img.height / 2);
 
             // draw stone
             for (var x = 0; x < block_stones.length; x++) {
                 for (var y = 0; y < block_stones.length; y++) {
+                    var stone_img;
                     switch (block_stones[y][x]) {
                         case 1:
-                            this.game_context.strokeStyle = '#000';
-                            this.game_context.fillStyle = '#000';
+                            stone_img = this.stone_img.white;
                             break;
                         case 2:
-                            this.game_context.strokeStyle = '#000';
-                            this.game_context.fillStyle = '#fff';
+                            stone_img = this.stone_img.black;
                             break;
                         default:
-                            this.game_context.strokeStyle = '#fff';
-                            this.game_context.fillStyle = '#fff';
+                            stone_img = null;
                             break;
                     }
-                    this.game_context.beginPath();
-                    this.game_context.arc((x + 0.5) * this.game_width / block_stones.length, (y + 0.5) * this.game_height / block_stones.length, 22, 0, 2 * Math.PI);
-                    this.game_context.stroke();
-                    this.game_context.fill();
-                    this.game_context.closePath();
+                    if (stone_img) {
+                        var OFFSET = 10;
+
+                        this.game_context.drawImage(stone_img, x * (this.game_width - OFFSET * 2) / block_stones.length + OFFSET + 3, y * (this.game_height - OFFSET * 2) / block_stones.length + OFFSET + 3, stone_img.width / 2, stone_img.height / 2);
+                    }
                 }
             }
         }
@@ -786,10 +788,9 @@ module.exports = function () {
 
     }, {
         key: 'fin',
-        value: function fin(result_query, winner_id) {
+        value: function fin(result_query, is_win) {
             var $result = $(result_query);
-            var PLAYER_NAME = ['', '黒', '白'];
-            $result.addClass('is_show').text(PLAYER_NAME[winner_id] + 'の勝ち');
+            $result.attr({ 'data-is-win': is_win });
         }
 
         /**
@@ -797,13 +798,12 @@ module.exports = function () {
          */
 
     }, {
-        key: 'showUsername',
-        value: function showUsername(username_query) {
+        key: 'showUserstone',
+        value: function showUserstone(userstone_query) {
             var player_id = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
 
-            var $username = $(username_query);
-            var PLAYER_NAME = ['', '黒', '白'];
-            $username.html('あなたのコマは<strong>' + PLAYER_NAME[player_id] + '</strong>です。');
+            var $username = $(userstone_query);
+            $username.filter('[data-id=\'' + player_id + '\']').addClass('is_me');
         }
 
         /**
@@ -846,11 +846,11 @@ module.exports = function () {
                 $countdown.removeClass('is_show');
 
                 setTimeout(function () {
-                    if (count > 0) $countdown.text(count);else $countdown.text('START');
+                    if (count > 0) $countdown.attr({ 'data-id': count });
 
                     $countdown.addClass('is_show');
 
-                    if (--count < 0) {
+                    if (--count <= 0) {
                         clearInterval(interval);
                         setTimeout(function () {
                             $countdown.removeClass('is_show');

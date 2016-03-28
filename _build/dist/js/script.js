@@ -642,7 +642,9 @@ var Main = function () {
             });
 
             this.gameModel.on('fin', function (winner_id) {
-                _this.gameView.fin('.result', winner_id);
+                if (!player_id) player_id = 1; // when played with computer
+                var is_win = winner_id === player_id;
+                _this.gameView.fin('.result', is_win);
             });
 
             this.milkcocoa.on('send', function (arg) {
@@ -762,10 +764,10 @@ module.exports = function () {
                     var stone_img;
                     switch (block_stones[y][x]) {
                         case 1:
-                            stone_img = this.stone_img.black;
+                            stone_img = this.stone_img.white;
                             break;
                         case 2:
-                            stone_img = this.stone_img.white;
+                            stone_img = this.stone_img.black;
                             break;
                         default:
                             stone_img = null;
@@ -786,10 +788,9 @@ module.exports = function () {
 
     }, {
         key: 'fin',
-        value: function fin(result_query, winner_id) {
+        value: function fin(result_query, is_win) {
             var $result = $(result_query);
-            var PLAYER_NAME = ['', '黒', '白'];
-            $result.addClass('is_show').text(PLAYER_NAME[winner_id] + 'の勝ち');
+            $result.attr({ 'data-is-win': is_win });
         }
 
         /**

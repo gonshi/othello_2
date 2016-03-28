@@ -20,7 +20,9 @@ class Main{
         requestAnimationFrame(() => {this.render();});
 
         this.gameModel.on('fin', (winner_id) => {
-            this.gameView.fin('.result', winner_id);
+            if(!player_id) player_id = 1; // when played with computer
+            let is_win = winner_id === player_id;
+            this.gameView.fin('.result', is_win);
         });
 
         this.milkcocoa.on('send', (arg) => {

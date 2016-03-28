@@ -128,17 +128,16 @@ body{
 .result{
     display: none;
     @include absolute(0, 0, 0, 0);
-    height: 2.5em;
-    line-height: 2.5em;
     margin: auto;
-    text-align: center;
-    font-size: 56px;
-    letter-spacing: 1px;
-    color: #fff;
-    background-color: rgba(0, 0, 0, 0.7);
 
-    &.is_show{
+    &[data-is-win="true"]{
         display: block;
+        @include sprite-2x($win);
+    }
+
+    &[data-is-win="false"]{
+        display: block;
+        @include sprite-2x($lose);
     }
 }
 
