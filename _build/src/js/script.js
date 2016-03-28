@@ -14,8 +14,10 @@ class Main{
         var match_id;
 
         this.gameModel.on('change', (block_stones) => {
-            this.render(block_stones);
+            this.block_stones = block_stones;
         });
+
+        requestAnimationFrame(() => {this.render();});
 
         this.gameModel.on('fin', (winner_id) => {
             this.gameView.fin('.result', winner_id);
@@ -59,8 +61,9 @@ class Main{
         this.gameModel.getBlockStones();
     }
 
-    render(block_stones){
-        this.gameView.draw(block_stones);
+    render(){
+        this.gameView.draw(this.block_stones);
+        requestAnimationFrame(() => {this.render();});
     }
 }
 var main = new Main();

@@ -385,14 +385,19 @@ a:hover, a:active {
             transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
   }
 }
+body {
+  background-image: url("../img/bg.jpg");
+  background-size: cover;
+}
+
 .game {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  width: 335px;
-  height: 335px;
+  width: 375px;
+  height: 375px;
   margin: auto;
 }
 
@@ -433,7 +438,7 @@ a:hover, a:active {
   line-height: 2.5em;
   margin: auto;
   text-align: center;
-  font-size: 128px;
+  font-size: 96px;
   text-shadow: 4px 0px 0px #fff, -3.49322px -1.9487px 0px #fff, 2.10128px 3.40362px 0px #fff, -0.17692px -3.99608px 0px #fff, -1.7923px 3.57598px 0px #fff, 3.30734px -2.24976px 0px #fff, -3.98436px 0.35348px 0px #fff, 3.65176px 1.63238px 0px #fff, -2.39384px -3.20462px 0px #fff, 0.52934px 3.96482px 0px #fff, 1.46928px -3.72038px 0px #fff, -3.0956px 2.53324px 0px #fff, 3.93752px -0.70418px 0px #fff, -3.78172px -1.3033px 0px #fff, 2.66766px 2.98054px 0px #fff, -0.87764px -3.90254px 0px #fff, -1.13476px 3.83566px 0px #fff;
 }
 .countdown.is_show {

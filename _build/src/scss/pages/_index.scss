@@ -24,10 +24,15 @@
     100% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); }
 }
 
+body{
+    background-image: url("../img/bg.jpg");
+    background-size: cover;
+}
+
 .game{
     @include absolute(0, 0, 0, 0);
-    width: 335px;
-    height: 335px;
+    width: 375px;
+    height: 375px;
     margin: auto;
 }
 
@@ -60,7 +65,7 @@
     line-height: 2.5em;
     margin: auto;
     text-align: center;
-    font-size: 128px;
+    font-size: 96px;
     @include open-face(#fff);
 
     &.is_show{
