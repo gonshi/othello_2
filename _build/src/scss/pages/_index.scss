@@ -1,3 +1,5 @@
+@import "../_sprite";
+
 // ===================================
 //   game
 // ===================================
@@ -29,21 +31,57 @@ body{
     background-size: cover;
 }
 
+.userstone{
+    &[data-id="1"]{
+        left: 10px;
+        @include sprite-2x($flag_white);
+
+        .userstone__title{
+            @include sprite-2x($you_white);
+        }
+
+        .userstone__pic{
+            @include sprite-2x($stone_white);
+        }
+    }
+
+    &[data-id="2"]{
+        right: 10px;
+        @include sprite-2x($flag_black);
+
+        .userstone__title{
+            @include sprite-2x($you_black);
+        }
+
+        .userstone__pic{
+            @include sprite-2x($stone_black);
+        }
+    }
+}
+
+.userstone{
+    @include absolute(-60px, '', '', '');
+
+    &.is_me{
+        top: -20px;
+    }
+}
+
+.userstone__title{
+    @include absolute(35px, 0, '', 0);
+    margin: auto;
+}
+
+.userstone__pic{
+    @include absolute(65px, 0, '', 0);
+    margin: auto;
+}
+
 .game{
     @include absolute(0, 0, 0, 0);
     width: 375px;
     height: 375px;
     margin: auto;
-}
-
-.username{
-    @include absolute(50px, 0, '', 0);
-    text-align: center;
-    font-size: 20px;
-
-    strong{
-        font-weight: bold;
-    }
 }
 
 .penalty{
@@ -66,11 +104,24 @@ body{
     margin: auto;
     text-align: center;
     font-size: 96px;
+    @include hide-text();
     @include open-face(#fff);
 
     &.is_show{
         display: block;
         animation: slide 0.5s linear both;
+    }
+
+    &[data-id="1"]{
+        @include sprite-2x($number_one);
+    }
+
+    &[data-id="2"]{
+        @include sprite-2x($number_two);
+    }
+
+    &[data-id="3"]{
+        @include sprite-2x($number_three);
     }
 }
 

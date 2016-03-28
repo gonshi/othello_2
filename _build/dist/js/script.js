@@ -677,7 +677,7 @@ var Main = function () {
                 });
             }
 
-            this.gameView.showUsername('.username', player_id);
+            this.gameView.showUserstone('.userstone', player_id);
             this.gameModel.getBlockStones();
         }
     }, {
@@ -797,13 +797,12 @@ module.exports = function () {
          */
 
     }, {
-        key: 'showUsername',
-        value: function showUsername(username_query) {
+        key: 'showUserstone',
+        value: function showUserstone(userstone_query) {
             var player_id = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
 
-            var $username = $(username_query);
-            var PLAYER_NAME = ['', '黒', '白'];
-            $username.html('あなたのコマは<strong>' + PLAYER_NAME[player_id] + '</strong>です。');
+            var $username = $(userstone_query);
+            $username.filter('[data-id=\'' + player_id + '\']').addClass('is_me');
         }
 
         /**
@@ -846,11 +845,11 @@ module.exports = function () {
                 $countdown.removeClass('is_show');
 
                 setTimeout(function () {
-                    if (count > 0) $countdown.text(count);else $countdown.text('START');
+                    if (count > 0) $countdown.attr({ 'data-id': count });
 
                     $countdown.addClass('is_show');
 
-                    if (--count < 0) {
+                    if (--count <= 0) {
                         clearInterval(interval);
                         setTimeout(function () {
                             $countdown.removeClass('is_show');

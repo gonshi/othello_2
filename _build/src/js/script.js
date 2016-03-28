@@ -57,7 +57,7 @@ class Main{
             });
         }
 
-        this.gameView.showUsername('.username', player_id);
+        this.gameView.showUserstone('.userstone', player_id);
         this.gameModel.getBlockStones();
     }
 

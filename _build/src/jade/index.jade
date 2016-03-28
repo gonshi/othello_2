@@ -20,8 +20,13 @@ html(lang="ja")
     link(href="css/style.css" rel="stylesheet")
   body
     main.contents
-      p.username
-      p.penalty Miss! 2秒休み
+      div.userstone(data-id="1")
+        p.userstone__title
+        p.userstone__pic
+      div.userstone(data-id="2")
+        p.userstone__title
+        p.userstone__pic
+      p.penalty Miss!
       canvas.game
       p.countdown
       p.result

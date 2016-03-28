@@ -79,10 +79,9 @@ module.exports = class GameView{
     /**
      * show username in response to the player_id.
      */
-    showUsername(username_query, player_id = 1){
-        var $username = $(username_query);
-        const PLAYER_NAME = ['', '黒', '白'];
-        $username.html(`あなたのコマは<strong>${PLAYER_NAME[player_id]}</strong>です。`);
+    showUserstone(userstone_query, player_id = 1){
+        var $username = $(userstone_query);
+        $username.filter(`[data-id='${player_id}']`).addClass('is_me');
     }
 
     /**
@@ -116,12 +115,11 @@ module.exports = class GameView{
             $countdown.removeClass('is_show');
 
             setTimeout(function(){
-                if(count > 0) $countdown.text(count);
-                else $countdown.text('START');
+                if(count > 0) $countdown.attr({'data-id': count});
 
                 $countdown.addClass('is_show');
 
-                if(--count < 0){
+                if(--count <= 0){
                     clearInterval(interval);
                     setTimeout(function(){
                         $countdown.removeClass('is_show');
