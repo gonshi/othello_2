@@ -490,7 +490,7 @@ body {
 
 .game {
   position: absolute;
-  top: 0;
+  top: 125px;
   bottom: 0;
   left: 0;
   right: 0;
@@ -502,12 +502,16 @@ body {
 .penalty {
   display: none;
   position: absolute;
-  bottom: 50px;
+  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  text-align: center;
-  font-size: 24px;
-  color: red;
+  background-image: url(../img/sprite.png);
+  background-position: 0px 0px;
+  width: 357px;
+  height: 355.5px;
+  background-size: 769.5px 577.5px;
+  margin: auto;
 }
 .penalty.is_show {
   display: block;
