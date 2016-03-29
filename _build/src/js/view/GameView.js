@@ -127,5 +127,8 @@ module.exports = class GameView{
                 }
             }, 50);
         }, 1000);
+
+        $countdown.attr({'data-id': count--});
+        $countdown.addClass('is_show');
     }
 }

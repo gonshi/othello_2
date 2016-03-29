@@ -1,0 +1,67 @@
+{
+  "resources": [
+    "audio/output.mp3"
+  ],
+  "spritemap": {
+    "bgm": {
+      "start": 0,
+      "end": 102.06040816326531,
+      "loop": false
+    },
+    "change_1": {
+      "start": 104,
+      "end": 105.78789115646258,
+      "loop": false
+    },
+    "change_2": {
+      "start": 107,
+      "end": 109.32850340136055,
+      "loop": false
+    },
+    "change_3": {
+      "start": 111,
+      "end": 111.3843537414966,
+      "loop": false
+    },
+    "countdown": {
+      "start": 113,
+      "end": 117.57142857142857,
+      "loop": false
+    },
+    "penalty": {
+      "start": 119,
+      "end": 125.45585034013605,
+      "loop": false
+    },
+    "put_1": {
+      "start": 127,
+      "end": 128.24374149659863,
+      "loop": false
+    },
+    "put_2": {
+      "start": 130,
+      "end": 131.18709750566893,
+      "loop": false
+    },
+    "put_3": {
+      "start": 133,
+      "end": 134.08435374149659,
+      "loop": false
+    },
+    "put_4": {
+      "start": 136,
+      "end": 136.48396825396824,
+      "loop": false
+    },
+    "result": {
+      "start": 138,
+      "end": 144.03428571428572,
+      "loop": false
+    },
+    "select": {
+      "start": 146,
+      "end": 147.5673469387755,
+      "loop": false
+    }
+  }
+}

@@ -128,6 +128,9 @@ module.exports = class GameModel extends EventEmitter{
             this.checkFin();
             this.emit('change', _block_stones);
         }
+        else{
+            this.emit('put');
+        }
         return is_put_succeed;
     }
 
@@ -190,6 +193,8 @@ module.exports = class GameModel extends EventEmitter{
             $penalty.removeClass('is_show');
             _can_put = true;
         }, seconds);
+
+        this.emit('penalty');
     }
 
     /**

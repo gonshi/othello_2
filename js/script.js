@@ -1,4 +1,63 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports={
+  "spritemap": {
+    "bgm": {
+      "start": 0,
+      "end": 102.06040816326531
+    },
+    "change_1": {
+      "start": 104,
+      "end": 105.78789115646258
+    },
+    "change_2": {
+      "start": 107,
+      "end": 109.32850340136055
+    },
+    "change_3": {
+      "start": 111,
+      "end": 111.3843537414966
+    },
+    "countdown": {
+      "start": 113,
+      "end": 117.57142857142857
+    },
+    "penalty": {
+      "start": 119,
+      "end": 125.45585034013605
+    },
+    "put_1": {
+      "start": 127,
+      "end": 128.24374149659863
+    },
+    "put_2": {
+      "start": 130,
+      "end": 131.18709750566893
+    },
+    "put_3": {
+      "start": 133,
+      "end": 134.08435374149659
+    },
+    "put_4": {
+      "start": 136,
+      "end": 136.48396825396824
+    },
+    "result": {
+      "start": 138,
+      "end": 144.03428571428572
+    },
+    "select": {
+      "start": 146,
+      "end": 147.5673469387755
+    }
+  },
+  "src": [
+    {
+      "media": "audio/mpeg",
+      "path": "audio/output.mp3"
+    }
+  ]
+}
+},{}],2:[function(require,module,exports){
 'use strict';
 
 //
@@ -262,7 +321,7 @@ if ('undefined' !== typeof module) {
   module.exports = EventEmitter;
 }
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -320,7 +379,7 @@ module.exports = function (_EventEmitter) {
     return GameController;
 }(EventEmitter);
 
-},{"eventemitter3":1}],3:[function(require,module,exports){
+},{"eventemitter3":2}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -466,6 +525,8 @@ module.exports = function (_EventEmitter) {
             if (is_put_succeed) {
                 this.checkFin();
                 this.emit('change', _block_stones);
+            } else {
+                this.emit('put');
             }
             return is_put_succeed;
         }
@@ -544,6 +605,8 @@ module.exports = function (_EventEmitter) {
                 $penalty.removeClass('is_show');
                 _can_put = true;
             }, seconds);
+
+            this.emit('penalty');
         }
 
         /**
@@ -560,7 +623,7 @@ module.exports = function (_EventEmitter) {
     return GameModel;
 }(EventEmitter);
 
-},{"../controller/GameController":2,"../module/Milkcocoa":4,"eventemitter3":1}],4:[function(require,module,exports){
+},{"../controller/GameController":3,"../module/Milkcocoa":5,"eventemitter3":2}],5:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -605,7 +668,42 @@ module.exports = function (_EventEmitter) {
     return Milkcocoa;
 }(EventEmitter);
 
-},{"eventemitter3":1}],5:[function(require,module,exports){
+},{"eventemitter3":2}],6:[function(require,module,exports){
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+module.exports = function () {
+    function Sound() {
+        _classCallCheck(this, Sound);
+
+        boombox.setup();
+    }
+
+    _createClass(Sound, [{
+        key: 'init',
+        value: function init() {
+            boombox.load('sound', require('../../../dist/audio/boombox-output.json'), function (err, audio) {});
+        }
+    }, {
+        key: 'play',
+        value: function play(id) {
+            if (boombox.get('sound-' + id)) boombox.get('sound-' + id).play();
+        }
+    }, {
+        key: 'playBGM',
+        value: function playBGM() {
+            boombox.get('sound-bgm').setLoop(boombox.LOOP_NATIVE);
+            boombox.get('sound-bgm').play();
+        }
+    }]);
+
+    return Sound;
+}();
+
+},{"../../../dist/audio/boombox-output.json":1}],7:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -615,6 +713,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var GameModel = require('./model/GameModel');
 var GameView = require('./view/GameView');
 var Milkcocoa = require('./module/Milkcocoa');
+var Sound = require('./module/Sound');
 
 var Main = function () {
     function Main() {
@@ -623,6 +722,7 @@ var Main = function () {
         this.gameModel = new GameModel();
         this.gameView = new GameView('.game');
         this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
+        this.sound = new Sound();
     }
 
     _createClass(Main, [{
@@ -635,16 +735,26 @@ var Main = function () {
 
             this.gameModel.on('change', function (block_stones) {
                 _this.block_stones = block_stones;
+                _this.sound.play('change_' + Math.floor(Math.random() * 3 + 1));
+            });
+
+            this.gameModel.on('change', function (block_stones) {
+                _this.sound.play('put_' + Math.floor(Math.random() * 4 + 1));
             });
 
             requestAnimationFrame(function () {
                 _this.render();
             });
 
+            this.gameModel.on('penalty', function () {
+                _this.sound.play('penalty');
+            });
+
             this.gameModel.on('fin', function (winner_id) {
                 if (!player_id) player_id = 1; // when played with computer
                 var is_win = winner_id === player_id;
                 _this.gameView.fin('.result', is_win);
+                _this.sound.play('result');
             });
 
             this.milkcocoa.on('send', function (arg) {
@@ -652,7 +762,9 @@ var Main = function () {
                 _this.gameView.hideQR('.qr');
                 _this.gameView.countdown('.countdown', function () {
                     _this.gameModel.init(player_id, match_id);
+                    _this.sound.playBGM();
                 });
+                _this.sound.play('countdown');
             });
 
             this.gameView.init();
@@ -681,6 +793,8 @@ var Main = function () {
 
             this.gameView.showUserstone('.userstone', player_id);
             this.gameModel.getBlockStones();
+
+            this.sound.init();
         }
     }, {
         key: 'render',
@@ -700,7 +814,7 @@ var Main = function () {
 var main = new Main();
 main.init();
 
-},{"./model/GameModel":3,"./module/Milkcocoa":4,"./view/GameView":6}],6:[function(require,module,exports){
+},{"./model/GameModel":4,"./module/Milkcocoa":5,"./module/Sound":6,"./view/GameView":8}],8:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -859,10 +973,13 @@ module.exports = function () {
                     }
                 }, 50);
             }, 1000);
+
+            $countdown.attr({ 'data-id': count-- });
+            $countdown.addClass('is_show');
         }
     }]);
 
     return GameView;
 }();
 
-},{}]},{},[5]);
+},{}]},{},[7]);

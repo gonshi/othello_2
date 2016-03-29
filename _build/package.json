@@ -23,6 +23,7 @@
   "devDependencies": {
     "babel-preset-es2015": "^6.3.13",
     "babelify": "^7.2.0",
+    "boombox.js": "^1.0.9",
     "browser-sync": "^2.9.8",
     "browserify": "^11.2.0",
     "coffee-script": "^1.9.1",
