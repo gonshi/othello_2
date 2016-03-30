@@ -905,6 +905,11 @@ var Main = function () {
                 _this.sound.play('countdown');
             });
 
+            this.milkcocoa.on('send', function (arg) {
+                if (arg.event !== 'restart' || arg.match_id !== match_id) return;
+                _this.restart();
+            });
+
             this.sound.on('load', function () {
                 if (location.search.match('match')) {
                     if (location.search.match(/match=(.*?)($|\&)/)) {
@@ -931,7 +936,10 @@ var Main = function () {
             $('.retry').on('click', function () {
                 $('.retry').removeClass('is_show');
                 setTimeout(function () {
-                    _this.restart();
+                    _this.milkcocoa.send({
+                        event: 'restart',
+                        match_id: match_id
+                    });
                 }, 500);
             });
 
@@ -954,7 +962,7 @@ var Main = function () {
 
             this.gameView.reset('.result');
             this.gameView.countdown('.countdown', function () {
-                _this2.gameModel.initComputer();
+                if (!location.search.match('match')) _this2.gameModel.initComputer();
                 _this2.gameModel.restartController();
                 _this2.sound.playBGM();
             });

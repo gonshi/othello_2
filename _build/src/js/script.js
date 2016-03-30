@@ -71,6 +71,11 @@ class Main{
             this.sound.play('countdown');
         });
 
+        this.milkcocoa.on('send', (arg) => {
+            if(arg.event !== 'restart' || arg.match_id !== match_id) return;
+            this.restart();
+        });
+
         this.sound.on('load', () => {
             if(location.search.match('match')){
                 if(location.search.match(/match=(.*?)($|\&)/)){
@@ -98,7 +103,12 @@ class Main{
 
         $('.retry').on('click', () => {
             $('.retry').removeClass('is_show');
-            setTimeout(() => {this.restart();}, 500);
+            setTimeout(() => {
+                this.milkcocoa.send({
+                    event: 'restart',
+                    match_id: match_id,
+                });
+            }, 500);
         });
 
         this.gameView.init();
@@ -115,7 +125,7 @@ class Main{
     restart(){
         this.gameView.reset('.result');
         this.gameView.countdown('.countdown', () => {
-            this.gameModel.initComputer();
+            if(!location.search.match('match')) this.gameModel.initComputer();
             this.gameModel.restartController();
             this.sound.playBGM();
         });
