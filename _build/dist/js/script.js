@@ -689,7 +689,7 @@ module.exports = function (_EventEmitter) {
     }, {
         key: 'reset',
         value: function reset() {
-            _block_stones = _origin_block_stones;
+            setOriginBlockStone();
         }
 
         /**

@@ -243,7 +243,7 @@ module.exports = class GameModel extends EventEmitter{
      * reset all block stones
      */
     reset(){
-        _block_stones = _origin_block_stones;
+        setOriginBlockStone();
     }
 
     /**

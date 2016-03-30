@@ -689,7 +689,7 @@ module.exports = function (_EventEmitter) {
     }, {
         key: 'reset',
         value: function reset() {
-            _block_stones = _origin_block_stones;
+            setOriginBlockStone();
         }
 
         /**
@@ -962,7 +962,7 @@ var Main = function () {
 
             this.gameView.reset('.result');
             this.gameView.countdown('.countdown', function () {
-                _this2.gameModel.initComputer();
+                if (!location.search.match('match')) _this2.gameModel.initComputer();
                 _this2.gameModel.restartController();
                 _this2.sound.playBGM();
             });
