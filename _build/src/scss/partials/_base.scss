@@ -27,7 +27,7 @@ a {
 }
 
 .contents {
-    position: relative;
+    @include absolute(0, 0, 0, 0);
     min-height: 700px;
     overflow: hidden;
 }
