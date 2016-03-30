@@ -343,6 +343,7 @@ module.exports = function (_EventEmitter) {
         var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GameController).call(this));
 
         _this.$game = $(query);
+        _this.is_pause = false;
         return _this;
     }
 
@@ -358,7 +359,7 @@ module.exports = function (_EventEmitter) {
 
             FastClick.attach(this.$game.get(0));
             this.$game.on('click', function (e) {
-                _this2.put(e);
+                if (!_this2.is_pause) _this2.put(e);
             });
 
             this.game_width = this.$game.width();
@@ -373,6 +374,26 @@ module.exports = function (_EventEmitter) {
         key: 'put',
         value: function put(e) {
             this.emit('put_stone', e.offsetX, e.offsetY, this.game_width, this.game_height);
+        }
+
+        /**
+         * pause
+         */
+
+    }, {
+        key: 'pause',
+        value: function pause() {
+            this.is_pause = true;
+        }
+
+        /**
+         * restart
+         */
+
+    }, {
+        key: 'restart',
+        value: function restart() {
+            this.is_pause = false;
         }
     }]);
 
@@ -394,9 +415,22 @@ var EventEmitter = require('eventemitter3');
 var GameController = require('../controller/GameController');
 var Milkcocoa = require('../module/Milkcocoa');
 
-var _block_stones = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 1, 2, 0, 0], [0, 0, 2, 1, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
+var _origin_block_stones = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 1, 2, 0, 0], [0, 0, 2, 1, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
 
+var _block_stones = [];
 var _can_put = true;
+
+/**
+ * set origin block stones to block stones.
+ */
+function setOriginBlockStone() {
+    for (var y = 0; y < _origin_block_stones.length; y++) {
+        _block_stones[y] = [];
+        for (var x = 0; x < _origin_block_stones[y].length; x++) {
+            _block_stones[y][x] = _origin_block_stones[y][x];
+        }
+    }
+}
 
 /**
  * @param {x} int
@@ -464,6 +498,7 @@ module.exports = function (_EventEmitter) {
 
         var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GameModel).call(this));
 
+        setOriginBlockStone();
         _this.gameController = new GameController('.game');
         _this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
         return _this;
@@ -557,9 +592,19 @@ module.exports = function (_EventEmitter) {
         value: function initComputer() {
             var _this3 = this;
 
-            setInterval(function () {
+            this.computer_interval = setInterval(function () {
                 _this3.searchPut();
             }, 1000);
+        }
+
+        /**
+         * stop computer manipulation.
+         */
+
+    }, {
+        key: 'stopComputer',
+        value: function stopComputer() {
+            clearInterval(this.computer_interval);
         }
 
         /**
@@ -585,6 +630,8 @@ module.exports = function (_EventEmitter) {
                     } else {
                         this.emit('fin', 2);
                     }
+                    this.releasePenalty('.penalty');
+                    this.stopComputer();
                 }
             }
         }
@@ -597,6 +644,8 @@ module.exports = function (_EventEmitter) {
     }, {
         key: 'wait',
         value: function wait(penalty_query, seconds) {
+            var _this4 = this;
+
             var $penalty = $(penalty_query);
             $penalty.addClass('is_show');
 
@@ -604,9 +653,23 @@ module.exports = function (_EventEmitter) {
             setTimeout(function () {
                 $penalty.removeClass('is_show');
                 _can_put = true;
+                _this4.emit('fin_penalty');
             }, seconds);
 
-            this.emit('penalty');
+            this.emit('start_penalty');
+        }
+
+        /**
+         * release penalty forcibly
+         */
+
+    }, {
+        key: 'releasePenalty',
+        value: function releasePenalty(penalty_query) {
+            var $penalty = $(penalty_query);
+            $penalty.removeClass('is_show');
+            _can_put = true;
+            this.emit('fin_penalty');
         }
 
         /**
@@ -617,6 +680,36 @@ module.exports = function (_EventEmitter) {
         key: 'getBlockStones',
         value: function getBlockStones() {
             this.emit('change', _block_stones);
+        }
+
+        /**
+         * reset all block stones
+         */
+
+    }, {
+        key: 'reset',
+        value: function reset() {
+            _block_stones = _origin_block_stones;
+        }
+
+        /**
+         * pause controller
+         */
+
+    }, {
+        key: 'pauseController',
+        value: function pauseController() {
+            this.gameController.pause();
+        }
+
+        /**
+         * restart controller
+         */
+
+    }, {
+        key: 'restartController',
+        value: function restartController() {
+            this.gameController.restart();
         }
     }]);
 
@@ -675,22 +768,49 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-module.exports = function () {
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EventEmitter = require('eventemitter3');
+
+module.exports = function (_EventEmitter) {
+    _inherits(Sound, _EventEmitter);
+
     function Sound() {
         _classCallCheck(this, Sound);
 
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Sound).call(this));
+
         boombox.setup();
+        return _this;
     }
 
     _createClass(Sound, [{
         key: 'init',
         value: function init() {
-            boombox.load('sound', require('../../../dist/audio/boombox-output.json'), function (err, audio) {});
+            var _this2 = this;
+
+            boombox.load('sound', require('../../../dist/audio/boombox-output.json'), function (err, audio) {
+                setTimeout(function () {
+                    _this2.emit('load');
+                }, 500);
+            });
         }
     }, {
         key: 'play',
         value: function play(id) {
             if (boombox.get('sound-' + id)) boombox.get('sound-' + id).play();
+        }
+    }, {
+        key: 'stop',
+        value: function stop(id) {
+            if (boombox.get('sound-' + id)) boombox.get('sound-' + id).stop();
+        }
+    }, {
+        key: 'changeVolume',
+        value: function changeVolume(id, volume) {
+            boombox.get('sound-' + id).volume(volume);
         }
     }, {
         key: 'playBGM',
@@ -701,9 +821,9 @@ module.exports = function () {
     }]);
 
     return Sound;
-}();
+}(EventEmitter);
 
-},{"../../../dist/audio/boombox-output.json":1}],7:[function(require,module,exports){
+},{"../../../dist/audio/boombox-output.json":1,"eventemitter3":2}],7:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -732,29 +852,47 @@ var Main = function () {
 
             var player_id;
             var match_id;
+            var CHANGE_SOUND_SIZE = 3;
+            var PUT_SOUND_SIZE = 4;
 
             this.gameModel.on('change', function (block_stones) {
                 _this.block_stones = block_stones;
-                _this.sound.play('change_' + Math.floor(Math.random() * 3 + 1));
+                _this.sound.play('change_' + Math.floor(Math.random() * CHANGE_SOUND_SIZE + 1));
             });
 
             this.gameModel.on('change', function (block_stones) {
-                _this.sound.play('put_' + Math.floor(Math.random() * 4 + 1));
+                _this.sound.play('put_' + Math.floor(Math.random() * PUT_SOUND_SIZE + 1));
             });
 
-            requestAnimationFrame(function () {
-                _this.render();
+            this.gameModel.on('start_penalty', function () {
+                _this.sound.changeVolume('bgm', 0.3);
+                for (var i = 0; i < CHANGE_SOUND_SIZE; i++) {
+                    _this.sound.changeVolume('change_' + (i + 1), 0.3);
+                }for (var i = 0; i < PUT_SOUND_SIZE; i++) {
+                    _this.sound.changeVolume('put_' + (i + 1), 0.3);
+                }_this.sound.play('penalty');
             });
 
-            this.gameModel.on('penalty', function () {
-                _this.sound.play('penalty');
+            this.gameModel.on('fin_penalty', function () {
+                _this.sound.changeVolume('bgm', 1);
+                for (var i = 0; i < CHANGE_SOUND_SIZE; i++) {
+                    _this.sound.changeVolume('change_' + (i + 1), 1);
+                }for (var i = 0; i < PUT_SOUND_SIZE; i++) {
+                    _this.sound.changeVolume('put_' + (i + 1), 1);
+                }_this.sound.stop('penalty');
             });
 
             this.gameModel.on('fin', function (winner_id) {
                 if (!player_id) player_id = 1; // when played with computer
                 var is_win = winner_id === player_id;
+                _this.gameModel.pauseController();
                 _this.gameView.fin('.result', is_win);
+                _this.sound.stop('bgm');
                 _this.sound.play('result');
+
+                setTimeout(function () {
+                    $('.retry').addClass('is_show');
+                }, 1000);
             });
 
             this.milkcocoa.on('send', function (arg) {
@@ -767,43 +905,71 @@ var Main = function () {
                 _this.sound.play('countdown');
             });
 
-            this.gameView.init();
-            this.milkcocoa.init();
-
-            if (location.search.match('match')) {
-                if (location.search.match(/match=(.*?)($|\&)/)) {
-                    player_id = 2;
-                    match_id = parseInt(location.search.match(/match=(.*?)($|\&)/)[1]);
-                    this.milkcocoa.send({
+            this.sound.on('load', function () {
+                if (location.search.match('match')) {
+                    if (location.search.match(/match=(.*?)($|\&)/)) {
+                        player_id = 2;
+                        match_id = parseInt(location.search.match(/match=(.*?)($|\&)/)[1]);
+                        _this.milkcocoa.send({
+                            event: 'start',
+                            match_id: match_id
+                        });
+                    } else {
+                        player_id = 1;
+                        match_id = Math.floor(Math.random() * 1000);
+                        _this.gameView.showQR('.qr', match_id);
+                    }
+                } else {
+                    match_id = Math.floor(Math.random() * 1000);
+                    _this.milkcocoa.send({
                         event: 'start',
                         match_id: match_id
                     });
-                } else {
-                    player_id = 1;
-                    match_id = Math.floor(Math.random() * 1000);
-                    this.gameView.showQR('.qr', match_id);
                 }
-            } else {
-                match_id = Math.floor(Math.random() * 1000);
-                this.milkcocoa.send({
-                    event: 'start',
-                    match_id: match_id
-                });
-            }
+            });
+
+            $('.retry').on('click', function () {
+                $('.retry').removeClass('is_show');
+                setTimeout(function () {
+                    _this.restart();
+                }, 500);
+            });
+
+            this.gameView.init();
+            this.milkcocoa.init();
 
             this.gameView.showUserstone('.userstone', player_id);
             this.gameModel.getBlockStones();
 
             this.sound.init();
+
+            requestAnimationFrame(function () {
+                _this.render();
+            });
+        }
+    }, {
+        key: 'restart',
+        value: function restart() {
+            var _this2 = this;
+
+            this.gameView.reset('.result');
+            this.gameView.countdown('.countdown', function () {
+                _this2.gameModel.initComputer();
+                _this2.gameModel.restartController();
+                _this2.sound.playBGM();
+            });
+            this.gameModel.reset();
+            this.sound.play('countdown');
+            this.gameModel.getBlockStones();
         }
     }, {
         key: 'render',
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             this.gameView.draw(this.block_stones);
             requestAnimationFrame(function () {
-                _this2.render();
+                _this3.render();
             });
         }
     }]);
@@ -976,6 +1142,17 @@ module.exports = function () {
 
             $countdown.attr({ 'data-id': count-- });
             $countdown.addClass('is_show');
+        }
+
+        /**
+         * reset all views
+         */
+
+    }, {
+        key: 'reset',
+        value: function reset(result_query) {
+            var $result = $(result_query);
+            $result.attr({ 'data-is-win': '' });
         }
     }]);
 
