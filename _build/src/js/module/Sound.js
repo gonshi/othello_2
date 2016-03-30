@@ -1,10 +1,14 @@
-module.exports = class Sound{
+var EventEmitter = require('eventemitter3');
+
+module.exports = class Sound extends EventEmitter{
     constructor(){
+        super();
         boombox.setup();
     }
 
     init(){
-        boombox.load('sound', require('../../../dist/audio/boombox-output.json'), function (err, audio) {
+        boombox.load('sound', require('../../../dist/audio/boombox-output.json'), (err, audio) => {
+            setTimeout(() => {this.emit('load');}, 500);
         });
     }
 

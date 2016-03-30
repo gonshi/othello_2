@@ -502,7 +502,7 @@ body {
 .penalty {
   display: none;
   position: absolute;
-  top: 0;
+  top: 125px;
   bottom: 0;
   left: 0;
   right: 0;
@@ -564,7 +564,7 @@ body {
 .result {
   display: none;
   position: absolute;
-  top: 0;
+  top: 125px;
   bottom: 0;
   left: 0;
   right: 0;

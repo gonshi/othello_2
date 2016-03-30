@@ -675,17 +675,34 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-module.exports = function () {
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EventEmitter = require('eventemitter3');
+
+module.exports = function (_EventEmitter) {
+    _inherits(Sound, _EventEmitter);
+
     function Sound() {
         _classCallCheck(this, Sound);
 
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Sound).call(this));
+
         boombox.setup();
+        return _this;
     }
 
     _createClass(Sound, [{
         key: 'init',
         value: function init() {
-            boombox.load('sound', require('../../../dist/audio/boombox-output.json'), function (err, audio) {});
+            var _this2 = this;
+
+            boombox.load('sound', require('../../../dist/audio/boombox-output.json'), function (err, audio) {
+                setTimeout(function () {
+                    _this2.emit('load');
+                }, 500);
+            });
         }
     }, {
         key: 'play',
@@ -701,9 +718,9 @@ module.exports = function () {
     }]);
 
     return Sound;
-}();
+}(EventEmitter);
 
-},{"../../../dist/audio/boombox-output.json":1}],7:[function(require,module,exports){
+},{"../../../dist/audio/boombox-output.json":1,"eventemitter3":2}],7:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -742,10 +759,6 @@ var Main = function () {
                 _this.sound.play('put_' + Math.floor(Math.random() * 4 + 1));
             });
 
-            requestAnimationFrame(function () {
-                _this.render();
-            });
-
             this.gameModel.on('penalty', function () {
                 _this.sound.play('penalty');
             });
@@ -767,34 +780,40 @@ var Main = function () {
                 _this.sound.play('countdown');
             });
 
-            this.gameView.init();
-            this.milkcocoa.init();
-
-            if (location.search.match('match')) {
-                if (location.search.match(/match=(.*?)($|\&)/)) {
-                    player_id = 2;
-                    match_id = parseInt(location.search.match(/match=(.*?)($|\&)/)[1]);
-                    this.milkcocoa.send({
+            this.sound.on('load', function () {
+                if (location.search.match('match')) {
+                    if (location.search.match(/match=(.*?)($|\&)/)) {
+                        player_id = 2;
+                        match_id = parseInt(location.search.match(/match=(.*?)($|\&)/)[1]);
+                        _this.milkcocoa.send({
+                            event: 'start',
+                            match_id: match_id
+                        });
+                    } else {
+                        player_id = 1;
+                        match_id = Math.floor(Math.random() * 1000);
+                        _this.gameView.showQR('.qr', match_id);
+                    }
+                } else {
+                    match_id = Math.floor(Math.random() * 1000);
+                    _this.milkcocoa.send({
                         event: 'start',
                         match_id: match_id
                     });
-                } else {
-                    player_id = 1;
-                    match_id = Math.floor(Math.random() * 1000);
-                    this.gameView.showQR('.qr', match_id);
                 }
-            } else {
-                match_id = Math.floor(Math.random() * 1000);
-                this.milkcocoa.send({
-                    event: 'start',
-                    match_id: match_id
-                });
-            }
+            });
+
+            this.gameView.init();
+            this.milkcocoa.init();
 
             this.gameView.showUserstone('.userstone', player_id);
             this.gameModel.getBlockStones();
 
             this.sound.init();
+
+            requestAnimationFrame(function () {
+                _this.render();
+            });
         }
     }, {
         key: 'render',

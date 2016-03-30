@@ -86,7 +86,7 @@ body{
 
 .penalty{
     display: none;
-    @include absolute(0, 0, 0, 0);
+    @include absolute(125px, 0, 0, 0);
     @include sprite-2x($penalty);
     margin: auto;
 
@@ -126,7 +126,7 @@ body{
 
 .result{
     display: none;
-    @include absolute(0, 0, 0, 0);
+    @include absolute(125px, 0, 0, 0);
     margin: auto;
 
     &[data-is-win="true"]{

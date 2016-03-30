@@ -24,8 +24,6 @@ class Main{
             this.sound.play(`put_${Math.floor(Math.random() * 4 + 1)}`);
         });
 
-        requestAnimationFrame(() => {this.render();});
-
         this.gameModel.on('penalty', () => {
             this.sound.play('penalty');
         });
@@ -47,36 +45,40 @@ class Main{
             this.sound.play('countdown');
         });
 
-        this.gameView.init();
-        this.milkcocoa.init();
-
-        if(location.search.match('match')){
-            if(location.search.match(/match=(.*?)($|\&)/)){
-                player_id = 2;
-                match_id = parseInt(location.search.match(/match=(.*?)($|\&)/)[1]);
+        this.sound.on('load', () => {
+            if(location.search.match('match')){
+                if(location.search.match(/match=(.*?)($|\&)/)){
+                    player_id = 2;
+                    match_id = parseInt(location.search.match(/match=(.*?)($|\&)/)[1]);
+                    this.milkcocoa.send({
+                        event: 'start',
+                        match_id: match_id,
+                    });
+                }
+                else{
+                    player_id = 1;
+                    match_id = Math.floor(Math.random() * 1000);
+                    this.gameView.showQR('.qr', match_id);
+                }
+            }
+            else{
+                match_id = Math.floor(Math.random() * 1000);
                 this.milkcocoa.send({
                     event: 'start',
                     match_id: match_id,
                 });
             }
-            else{
-                player_id = 1;
-                match_id = Math.floor(Math.random() * 1000);
-                this.gameView.showQR('.qr', match_id);
-            }
-        }
-        else{
-            match_id = Math.floor(Math.random() * 1000);
-            this.milkcocoa.send({
-                event: 'start',
-                match_id: match_id,
-            });
-        }
+        });
+
+        this.gameView.init();
+        this.milkcocoa.init();
 
         this.gameView.showUserstone('.userstone', player_id);
         this.gameModel.getBlockStones();
 
         this.sound.init();
+
+        requestAnimationFrame(() => {this.render();});
     }
 
     render(){
