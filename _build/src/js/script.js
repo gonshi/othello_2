@@ -51,8 +51,14 @@ class Main{
         this.gameModel.on('fin', (winner_id) => {
             if(!player_id) player_id = 1; // when played with computer
             let is_win = winner_id === player_id;
+            this.gameModel.pauseController();
             this.gameView.fin('.result', is_win);
+            this.sound.stop('bgm');
             this.sound.play('result');
+
+            setTimeout(function(){
+                $('.retry').addClass('is_show');
+            }, 1000);
         });
 
         this.milkcocoa.on('send', (arg) => {
@@ -90,6 +96,11 @@ class Main{
             }
         });
 
+        $('.retry').on('click', () => {
+            $('.retry').removeClass('is_show');
+            setTimeout(() => {this.restart();}, 500);
+        });
+
         this.gameView.init();
         this.milkcocoa.init();
 
@@ -99,6 +110,18 @@ class Main{
         this.sound.init();
 
         requestAnimationFrame(() => {this.render();});
+    }
+
+    restart(){
+        this.gameView.reset('.result');
+        this.gameView.countdown('.countdown', () => {
+            this.gameModel.initComputer();
+            this.gameModel.restartController();
+            this.sound.playBGM();
+        });
+        this.gameModel.reset();
+        this.sound.play('countdown');
+        this.gameModel.getBlockStones();
     }
 
     render(){

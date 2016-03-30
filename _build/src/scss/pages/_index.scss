@@ -78,7 +78,7 @@ body{
 }
 
 .game{
-    @include absolute(125px, 0, 0, 0);
+    @include absolute(0, 0, 0, 0);
     width: 375px;
     height: 375px;
     margin: auto;
@@ -86,7 +86,7 @@ body{
 
 .penalty{
     display: none;
-    @include absolute(125px, 0, 0, 0);
+    @include absolute(0, 0, 0, 0);
     @include sprite-2x($penalty);
     margin: auto;
 
@@ -97,7 +97,7 @@ body{
 
 .countdown{
     display: none;
-    @include absolute(125px, 0, 0, 0);
+    @include absolute(0, 0, 0, 0);
     height: 2.5em;
     line-height: 2.5em;
     margin: auto;
@@ -126,7 +126,7 @@ body{
 
 .result{
     display: none;
-    @include absolute(125px, 0, 0, 0);
+    @include absolute(0, 0, 0, 0);
     margin: auto;
 
     &[data-is-win="true"]{
@@ -137,6 +137,21 @@ body{
     &[data-is-win="false"]{
         display: block;
         @include sprite-2x($lose);
+    }
+}
+
+.retry{
+    visibility: hidden;
+    @include absolute('', 0, 20px, 0);
+    margin: auto;
+    @include sprite-2x($retry);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.5s ease 0s;
+
+    &.is_show{
+        visibility: visible;
+        opacity: 1;
     }
 }
 

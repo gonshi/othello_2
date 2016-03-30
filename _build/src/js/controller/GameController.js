@@ -4,6 +4,7 @@ module.exports = class GameController extends EventEmitter{
     constructor(query){
         super();
         this.$game = $(query);
+        this.is_pause = false;
     }
 
     /**
@@ -11,7 +12,9 @@ module.exports = class GameController extends EventEmitter{
      */
     init(){
         FastClick.attach(this.$game.get(0));
-        this.$game.on('click', (e) => {this.put(e);});
+        this.$game.on('click', (e) => {
+            if(!this.is_pause) this.put(e);
+        });
 
         this.game_width = this.$game.width();
         this.game_height = this.$game.height();
@@ -26,5 +29,19 @@ module.exports = class GameController extends EventEmitter{
             e.offsetX, e.offsetY,
             this.game_width, this.game_height
         );
+    }
+
+    /**
+     * pause
+     */
+    pause(){
+        this.is_pause = true;
+    }
+
+    /**
+     * restart
+     */
+    restart(){
+        this.is_pause = false;
     }
 }

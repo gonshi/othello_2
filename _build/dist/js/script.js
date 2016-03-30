@@ -343,6 +343,7 @@ module.exports = function (_EventEmitter) {
         var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GameController).call(this));
 
         _this.$game = $(query);
+        _this.is_pause = false;
         return _this;
     }
 
@@ -358,7 +359,7 @@ module.exports = function (_EventEmitter) {
 
             FastClick.attach(this.$game.get(0));
             this.$game.on('click', function (e) {
-                _this2.put(e);
+                if (!_this2.is_pause) _this2.put(e);
             });
 
             this.game_width = this.$game.width();
@@ -373,6 +374,26 @@ module.exports = function (_EventEmitter) {
         key: 'put',
         value: function put(e) {
             this.emit('put_stone', e.offsetX, e.offsetY, this.game_width, this.game_height);
+        }
+
+        /**
+         * pause
+         */
+
+    }, {
+        key: 'pause',
+        value: function pause() {
+            this.is_pause = true;
+        }
+
+        /**
+         * restart
+         */
+
+    }, {
+        key: 'restart',
+        value: function restart() {
+            this.is_pause = false;
         }
     }]);
 
@@ -394,9 +415,22 @@ var EventEmitter = require('eventemitter3');
 var GameController = require('../controller/GameController');
 var Milkcocoa = require('../module/Milkcocoa');
 
-var _block_stones = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 1, 2, 0, 0], [0, 0, 2, 1, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
+var _origin_block_stones = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 1, 2, 0, 0], [0, 0, 2, 1, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
 
+var _block_stones = [];
 var _can_put = true;
+
+/**
+ * set origin block stones to block stones.
+ */
+function setOriginBlockStone() {
+    for (var y = 0; y < _origin_block_stones.length; y++) {
+        _block_stones[y] = [];
+        for (var x = 0; x < _origin_block_stones[y].length; x++) {
+            _block_stones[y][x] = _origin_block_stones[y][x];
+        }
+    }
+}
 
 /**
  * @param {x} int
@@ -464,6 +498,7 @@ module.exports = function (_EventEmitter) {
 
         var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(GameModel).call(this));
 
+        setOriginBlockStone();
         _this.gameController = new GameController('.game');
         _this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
         return _this;
@@ -557,9 +592,19 @@ module.exports = function (_EventEmitter) {
         value: function initComputer() {
             var _this3 = this;
 
-            setInterval(function () {
+            this.computer_interval = setInterval(function () {
                 _this3.searchPut();
             }, 1000);
+        }
+
+        /**
+         * stop computer manipulation.
+         */
+
+    }, {
+        key: 'stopComputer',
+        value: function stopComputer() {
+            clearInterval(this.computer_interval);
         }
 
         /**
@@ -585,6 +630,8 @@ module.exports = function (_EventEmitter) {
                     } else {
                         this.emit('fin', 2);
                     }
+                    this.releasePenalty('.penalty');
+                    this.stopComputer();
                 }
             }
         }
@@ -613,6 +660,19 @@ module.exports = function (_EventEmitter) {
         }
 
         /**
+         * release penalty forcibly
+         */
+
+    }, {
+        key: 'releasePenalty',
+        value: function releasePenalty(penalty_query) {
+            var $penalty = $(penalty_query);
+            $penalty.removeClass('is_show');
+            _can_put = true;
+            this.emit('fin_penalty');
+        }
+
+        /**
          * emit change event, and return block_stones
          */
 
@@ -620,6 +680,36 @@ module.exports = function (_EventEmitter) {
         key: 'getBlockStones',
         value: function getBlockStones() {
             this.emit('change', _block_stones);
+        }
+
+        /**
+         * reset all block stones
+         */
+
+    }, {
+        key: 'reset',
+        value: function reset() {
+            _block_stones = _origin_block_stones;
+        }
+
+        /**
+         * pause controller
+         */
+
+    }, {
+        key: 'pauseController',
+        value: function pauseController() {
+            this.gameController.pause();
+        }
+
+        /**
+         * restart controller
+         */
+
+    }, {
+        key: 'restartController',
+        value: function restartController() {
+            this.gameController.restart();
         }
     }]);
 
@@ -795,8 +885,14 @@ var Main = function () {
             this.gameModel.on('fin', function (winner_id) {
                 if (!player_id) player_id = 1; // when played with computer
                 var is_win = winner_id === player_id;
+                _this.gameModel.pauseController();
                 _this.gameView.fin('.result', is_win);
+                _this.sound.stop('bgm');
                 _this.sound.play('result');
+
+                setTimeout(function () {
+                    $('.retry').addClass('is_show');
+                }, 1000);
             });
 
             this.milkcocoa.on('send', function (arg) {
@@ -832,6 +928,13 @@ var Main = function () {
                 }
             });
 
+            $('.retry').on('click', function () {
+                $('.retry').removeClass('is_show');
+                setTimeout(function () {
+                    _this.restart();
+                }, 500);
+            });
+
             this.gameView.init();
             this.milkcocoa.init();
 
@@ -845,13 +948,28 @@ var Main = function () {
             });
         }
     }, {
+        key: 'restart',
+        value: function restart() {
+            var _this2 = this;
+
+            this.gameView.reset('.result');
+            this.gameView.countdown('.countdown', function () {
+                _this2.gameModel.initComputer();
+                _this2.gameModel.restartController();
+                _this2.sound.playBGM();
+            });
+            this.gameModel.reset();
+            this.sound.play('countdown');
+            this.gameModel.getBlockStones();
+        }
+    }, {
         key: 'render',
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             this.gameView.draw(this.block_stones);
             requestAnimationFrame(function () {
-                _this2.render();
+                _this3.render();
             });
         }
     }]);
@@ -1024,6 +1142,17 @@ module.exports = function () {
 
             $countdown.attr({ 'data-id': count-- });
             $countdown.addClass('is_show');
+        }
+
+        /**
+         * reset all views
+         */
+
+    }, {
+        key: 'reset',
+        value: function reset(result_query) {
+            var $result = $(result_query);
+            $result.attr({ 'data-is-win': '' });
         }
     }]);
 

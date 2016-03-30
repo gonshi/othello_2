@@ -131,4 +131,12 @@ module.exports = class GameView{
         $countdown.attr({'data-id': count--});
         $countdown.addClass('is_show');
     }
+
+    /**
+     * reset all views
+     */
+    reset(result_query){
+        var $result = $(result_query);
+        $result.attr({'data-is-win': ''})
+    }
 }

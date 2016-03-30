@@ -2,7 +2,7 @@ var EventEmitter = require('eventemitter3');
 var GameController = require('../controller/GameController');
 var Milkcocoa = require('../module/Milkcocoa');
 
-var _block_stones = [
+var _origin_block_stones = [
     [0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0],
     [0, 0, 1, 2, 0, 0],
@@ -11,7 +11,20 @@ var _block_stones = [
     [0, 0, 0, 0, 0, 0]
 ];
 
+var _block_stones = [];
 var _can_put = true;
+
+/**
+ * set origin block stones to block stones.
+ */
+function setOriginBlockStone(){
+    for(let y = 0; y < _origin_block_stones.length; y++){
+        _block_stones[y] = [];
+        for(let x = 0; x < _origin_block_stones[y].length; x++){
+            _block_stones[y][x] = _origin_block_stones[y][x];
+        }
+    }
+}
 
 /**
  * @param {x} int
@@ -77,6 +90,7 @@ function updateStone(x, y, player){
 module.exports = class GameModel extends EventEmitter{
     constructor(){
         super();
+        setOriginBlockStone();
         this.gameController = new GameController('.game');
         this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
     }
@@ -152,7 +166,15 @@ module.exports = class GameModel extends EventEmitter{
      * init computer manipulation.
      */
     initComputer(){
-        setInterval(() => {this.searchPut();}, 1000);
+        this.computer_interval =
+            setInterval(() => {this.searchPut();}, 1000);
+    }
+
+    /**
+     * stop computer manipulation.
+     */
+    stopComputer(){
+        clearInterval(this.computer_interval);
     }
 
     /**
@@ -176,6 +198,8 @@ module.exports = class GameModel extends EventEmitter{
                 else{
                     this.emit('fin', 2);
                 }
+                this.releasePenalty('.penalty');
+                this.stopComputer();
             }
         }
     }
@@ -199,9 +223,40 @@ module.exports = class GameModel extends EventEmitter{
     }
 
     /**
+     * release penalty forcibly
+     */
+    releasePenalty(penalty_query){
+        let $penalty = $(penalty_query);
+        $penalty.removeClass('is_show');
+        _can_put = true;
+        this.emit('fin_penalty');
+    }
+
+    /**
      * emit change event, and return block_stones
      */
     getBlockStones(){
         this.emit('change', _block_stones);
+    }
+
+    /**
+     * reset all block stones
+     */
+    reset(){
+        _block_stones = _origin_block_stones;
+    }
+
+    /**
+     * pause controller
+     */
+    pauseController(){
+        this.gameController.pause();
+    }
+
+    /**
+     * restart controller
+     */
+    restartController(){
+        this.gameController.restart();
     }
 }

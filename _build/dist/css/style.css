@@ -202,11 +202,8 @@ a:hover, a:active {
 }
 
 .contents {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  position: relative;
+  min-height: 700px;
   overflow: hidden;
 }
 
@@ -422,46 +419,46 @@ body {
 .userstone[data-id="1"] {
   left: 10px;
   background-image: url(../img/sprite.png);
-  background-position: -399.5px -357.5px;
+  background-position: -99.5px -579.5px;
   width: 107px;
   height: 157.5px;
-  background-size: 769.5px 577.5px;
+  background-size: 774.5px 763px;
 }
 .userstone[data-id="1"] .userstone__title {
   background-image: url(../img/sprite.png);
-  background-position: -693px -536px;
+  background-position: -693px -533.5px;
   width: 48.5px;
   height: 15.5px;
-  background-size: 769.5px 577.5px;
+  background-size: 774.5px 763px;
 }
 .userstone[data-id="1"] .userstone__pic {
   background-image: url(../img/sprite.png);
-  background-position: -359px -294.5px;
+  background-position: -410.5px -222.5px;
   width: 49.5px;
   height: 53px;
-  background-size: 769.5px 577.5px;
+  background-size: 774.5px 763px;
 }
 .userstone[data-id="2"] {
   right: 10px;
   background-image: url(../img/sprite.png);
-  background-position: -642.5px -186px;
+  background-position: -642.5px -369px;
   width: 112px;
   height: 162.5px;
-  background-size: 769.5px 577.5px;
+  background-size: 774.5px 763px;
 }
 .userstone[data-id="2"] .userstone__title {
   background-image: url(../img/sprite.png);
-  background-position: -642.5px -536px;
+  background-position: -642.5px -533.5px;
   width: 48.5px;
   height: 15.5px;
-  background-size: 769.5px 577.5px;
+  background-size: 774.5px 763px;
 }
 .userstone[data-id="2"] .userstone__pic {
   background-image: url(../img/sprite.png);
-  background-position: -554px -222.5px;
+  background-position: -359px -222.5px;
   width: 49.5px;
   height: 53.5px;
-  background-size: 769.5px 577.5px;
+  background-size: 774.5px 763px;
 }
 
 .userstone {
@@ -490,7 +487,7 @@ body {
 
 .game {
   position: absolute;
-  top: 125px;
+  top: 0;
   bottom: 0;
   left: 0;
   right: 0;
@@ -502,7 +499,7 @@ body {
 .penalty {
   display: none;
   position: absolute;
-  top: 125px;
+  top: 0;
   bottom: 0;
   left: 0;
   right: 0;
@@ -510,7 +507,7 @@ body {
   background-position: 0px 0px;
   width: 357px;
   height: 355.5px;
-  background-size: 769.5px 577.5px;
+  background-size: 774.5px 763px;
   margin: auto;
 }
 .penalty.is_show {
@@ -520,7 +517,7 @@ body {
 .countdown {
   display: none;
   position: absolute;
-  top: 125px;
+  top: 0;
   bottom: 0;
   left: 0;
   right: 0;
@@ -541,30 +538,30 @@ body {
 }
 .countdown[data-id="1"] {
   background-image: url(../img/sprite.png);
-  background-position: -642.5px -350.5px;
+  background-position: 0px -579.5px;
   width: 97.5px;
   height: 183.5px;
-  background-size: 769.5px 577.5px;
+  background-size: 774.5px 763px;
 }
 .countdown[data-id="2"] {
   background-image: url(../img/sprite.png);
-  background-position: -265.5px -357.5px;
+  background-position: -642.5px 0px;
   width: 132px;
   height: 181px;
-  background-size: 769.5px 577.5px;
+  background-size: 774.5px 763px;
 }
 .countdown[data-id="3"] {
   background-image: url(../img/sprite.png);
-  background-position: -642.5px 0px;
+  background-position: -642.5px -183px;
   width: 127px;
   height: 184px;
-  background-size: 769.5px 577.5px;
+  background-size: 774.5px 763px;
 }
 
 .result {
   display: none;
   position: absolute;
-  top: 125px;
+  top: 0;
   bottom: 0;
   left: 0;
   right: 0;
@@ -576,7 +573,7 @@ body {
   background-position: 0px -357.5px;
   width: 263.5px;
   height: 220px;
-  background-size: 769.5px 577.5px;
+  background-size: 774.5px 763px;
 }
 .result[data-is-win="false"] {
   display: block;
@@ -584,7 +581,29 @@ body {
   background-position: -359px 0px;
   width: 281.5px;
   height: 220.5px;
-  background-size: 769.5px 577.5px;
+  background-size: 774.5px 763px;
+}
+
+.retry {
+  visibility: hidden;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  background-image: url(../img/sprite.png);
+  background-position: -265.5px -357.5px;
+  width: 269.5px;
+  height: 138px;
+  background-size: 774.5px 763px;
+  cursor: pointer;
+  opacity: 0;
+  -webkit-transition: opacity 0.5s ease 0s;
+          transition: opacity 0.5s ease 0s;
+}
+.retry.is_show {
+  visibility: visible;
+  opacity: 1;
 }
 
 .qr {
