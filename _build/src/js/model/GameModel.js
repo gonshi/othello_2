@@ -189,12 +189,13 @@ module.exports = class GameModel extends EventEmitter{
         $penalty.addClass('is_show');
 
         _can_put = false;
-        setTimeout(function(){
+        setTimeout(() => {
             $penalty.removeClass('is_show');
             _can_put = true;
+            this.emit('fin_penalty');
         }, seconds);
 
-        this.emit('penalty');
+        this.emit('start_penalty');
     }
 
     /**

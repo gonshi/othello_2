@@ -14,18 +14,38 @@ class Main{
     init(){
         var player_id;
         var match_id;
+        const CHANGE_SOUND_SIZE = 3;
+        const PUT_SOUND_SIZE = 4;
 
         this.gameModel.on('change', (block_stones) => {
             this.block_stones = block_stones;
-            this.sound.play(`change_${Math.floor(Math.random() * 3 + 1)}`);
+            this.sound.play(`change_${Math.floor(Math.random() * CHANGE_SOUND_SIZE + 1)}`);
         });
 
         this.gameModel.on('change', (block_stones) => {
-            this.sound.play(`put_${Math.floor(Math.random() * 4 + 1)}`);
+            this.sound.play(`put_${Math.floor(Math.random() * PUT_SOUND_SIZE + 1)}`);
         });
 
-        this.gameModel.on('penalty', () => {
+        this.gameModel.on('start_penalty', () => {
+            this.sound.changeVolume('bgm', 0.3);
+            for(let i = 0; i < CHANGE_SOUND_SIZE; i++)
+                this.sound.changeVolume(`change_${i + 1}`, 0.3);
+
+            for(let i = 0; i < PUT_SOUND_SIZE; i++)
+                this.sound.changeVolume(`put_${i + 1}`, 0.3);
+
             this.sound.play('penalty');
+        });
+
+        this.gameModel.on('fin_penalty', () => {
+            this.sound.changeVolume('bgm', 1);
+            for(let i = 0; i < CHANGE_SOUND_SIZE; i++)
+                this.sound.changeVolume(`change_${i + 1}`, 1);
+
+            for(let i = 0; i < PUT_SOUND_SIZE; i++)
+                this.sound.changeVolume(`put_${i + 1}`, 1);
+
+            this.sound.stop('penalty');
         });
 
         this.gameModel.on('fin', (winner_id) => {

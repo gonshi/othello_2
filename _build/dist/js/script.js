@@ -597,6 +597,8 @@ module.exports = function (_EventEmitter) {
     }, {
         key: 'wait',
         value: function wait(penalty_query, seconds) {
+            var _this4 = this;
+
             var $penalty = $(penalty_query);
             $penalty.addClass('is_show');
 
@@ -604,9 +606,10 @@ module.exports = function (_EventEmitter) {
             setTimeout(function () {
                 $penalty.removeClass('is_show');
                 _can_put = true;
+                _this4.emit('fin_penalty');
             }, seconds);
 
-            this.emit('penalty');
+            this.emit('start_penalty');
         }
 
         /**
@@ -710,6 +713,16 @@ module.exports = function (_EventEmitter) {
             if (boombox.get('sound-' + id)) boombox.get('sound-' + id).play();
         }
     }, {
+        key: 'stop',
+        value: function stop(id) {
+            if (boombox.get('sound-' + id)) boombox.get('sound-' + id).stop();
+        }
+    }, {
+        key: 'changeVolume',
+        value: function changeVolume(id, volume) {
+            boombox.get('sound-' + id).volume(volume);
+        }
+    }, {
         key: 'playBGM',
         value: function playBGM() {
             boombox.get('sound-bgm').setLoop(boombox.LOOP_NATIVE);
@@ -749,18 +762,34 @@ var Main = function () {
 
             var player_id;
             var match_id;
+            var CHANGE_SOUND_SIZE = 3;
+            var PUT_SOUND_SIZE = 4;
 
             this.gameModel.on('change', function (block_stones) {
                 _this.block_stones = block_stones;
-                _this.sound.play('change_' + Math.floor(Math.random() * 3 + 1));
+                _this.sound.play('change_' + Math.floor(Math.random() * CHANGE_SOUND_SIZE + 1));
             });
 
             this.gameModel.on('change', function (block_stones) {
-                _this.sound.play('put_' + Math.floor(Math.random() * 4 + 1));
+                _this.sound.play('put_' + Math.floor(Math.random() * PUT_SOUND_SIZE + 1));
             });
 
-            this.gameModel.on('penalty', function () {
-                _this.sound.play('penalty');
+            this.gameModel.on('start_penalty', function () {
+                _this.sound.changeVolume('bgm', 0.3);
+                for (var i = 0; i < CHANGE_SOUND_SIZE; i++) {
+                    _this.sound.changeVolume('change_' + (i + 1), 0.3);
+                }for (var i = 0; i < PUT_SOUND_SIZE; i++) {
+                    _this.sound.changeVolume('put_' + (i + 1), 0.3);
+                }_this.sound.play('penalty');
+            });
+
+            this.gameModel.on('fin_penalty', function () {
+                _this.sound.changeVolume('bgm', 1);
+                for (var i = 0; i < CHANGE_SOUND_SIZE; i++) {
+                    _this.sound.changeVolume('change_' + (i + 1), 1);
+                }for (var i = 0; i < PUT_SOUND_SIZE; i++) {
+                    _this.sound.changeVolume('put_' + (i + 1), 1);
+                }_this.sound.stop('penalty');
             });
 
             this.gameModel.on('fin', function (winner_id) {

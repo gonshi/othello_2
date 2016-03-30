@@ -97,7 +97,7 @@ body{
 
 .countdown{
     display: none;
-    @include absolute(0, 0, 0, 0);
+    @include absolute(125px, 0, 0, 0);
     height: 2.5em;
     line-height: 2.5em;
     margin: auto;

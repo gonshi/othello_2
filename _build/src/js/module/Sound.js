@@ -16,6 +16,14 @@ module.exports = class Sound extends EventEmitter{
         if(boombox.get(`sound-${id}`)) boombox.get(`sound-${id}`).play();
     }
 
+    stop(id){
+        if(boombox.get(`sound-${id}`)) boombox.get(`sound-${id}`).stop();
+    }
+
+    changeVolume(id, volume){
+        boombox.get(`sound-${id}`).volume(volume);
+    }
+
     playBGM(){
         boombox.get('sound-bgm').setLoop(boombox.LOOP_NATIVE);
         boombox.get('sound-bgm').play();
