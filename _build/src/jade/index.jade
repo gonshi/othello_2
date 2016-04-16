@@ -1,0 +1,43 @@
+doctype html
+html(lang="ja")
+  head(prefix="og: http://ogp.me/ns# fb: http://www.facebook.com/2008/fbml")
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=375, minimum-scale=0.25, maximum-scale=1.6, user-scalable=no")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    title= title
+    meta(name="description", content=description)
+    meta(name="keywords", content="")
+    meta(property="og:title" content=title)
+    meta(property="og:type" content="")
+    meta(property="og:url" content="")
+    meta(property="og:image" content="")
+    meta(property="og:site_name" content="")
+    meta(property="og:description" content=description)
+    meta(property="fb:app_id" content="")
+    meta(name="twitter:card" content="summary_large_image")
+    meta(name="twitter:site" content="")
+    link(rel="shortcut icon" href="/favicon.ico")
+    link(href="css/style.css" rel="stylesheet")
+  body
+    main.contents
+      div.userstone(data-id="1")
+        p.userstone__title
+        p.userstone__pic
+      div.userstone(data-id="2")
+        p.userstone__title
+        p.userstone__pic
+      canvas.game
+      p.penalty
+      p.countdown
+      p.result
+      p.retry
+      p.qr
+        img(src="http://placehold.it/300x300" alt="QR")
+    script(src="./js/lib/boombox.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js")
+    script(src="https://cdn.mlkcca.com/v2.0.0/milkcocoa.js")
+    script(src="js/script.js")
+    // Google Analytics: change UA-XXXXX-X to be your site's ID
+    script
+      include ga.js
