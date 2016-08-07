@@ -973,6 +973,8 @@ var Main = function () {
                         match_id: match_id
                     });
                 }
+
+                _this.gameView.showUserstone('.userstone', player_id);
             });
 
             this.$retry.on('click', function () {
@@ -987,7 +989,6 @@ var Main = function () {
             this.gameView.init();
             this.milkcocoa.init();
 
-            this.gameView.showUserstone('.userstone', player_id);
             this.gameModel.getBlockStones();
 
             this.sound.init();

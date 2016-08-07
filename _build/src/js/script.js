@@ -101,6 +101,8 @@ class Main{
                     match_id: match_id,
                 });
             }
+
+            this.gameView.showUserstone('.userstone', player_id);
         });
 
         this.$retry.on('click', () => {
@@ -115,7 +117,6 @@ class Main{
         this.gameView.init();
         this.milkcocoa.init();
 
-        this.gameView.showUserstone('.userstone', player_id);
         this.gameModel.getBlockStones();
 
         this.sound.init();
