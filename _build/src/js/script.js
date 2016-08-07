@@ -9,6 +9,8 @@ class Main{
         this.gameView = new GameView('.game');
         this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
         this.sound = new Sound();
+
+        this.$retry = $('.retry');
     }
 
     init(){
@@ -56,8 +58,8 @@ class Main{
             this.sound.stop('bgm');
             this.sound.play('result');
 
-            setTimeout(function(){
-                $('.retry').addClass('is_show');
+            setTimeout(() => {
+                this.$retry.addClass('is_show');
             }, 1000);
         });
 
@@ -101,8 +103,7 @@ class Main{
             }
         });
 
-        $('.retry').on('click', () => {
-            $('.retry').removeClass('is_show');
+        this.$retry.on('click', () => {
             setTimeout(() => {
                 this.milkcocoa.send({
                     event: 'restart',
@@ -123,6 +124,7 @@ class Main{
     }
 
     restart(){
+        this.$retry.removeClass('is_show');
         this.gameView.reset('.result');
         this.gameView.countdown('.countdown', () => {
             if(!location.search.match('match')) this.gameModel.initComputer();
