@@ -423,46 +423,46 @@ body {
 .userstone[data-id="1"] {
   left: 10px;
   background-image: url(../img/sprite.png);
-  background-position: -99.5px -579.5px;
+  background-position: -134px -362.5px;
   width: 107px;
   height: 157.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .userstone[data-id="1"] .userstone__title {
   background-image: url(../img/sprite.png);
-  background-position: -693px -533.5px;
+  background-position: -425px -273px;
   width: 48.5px;
   height: 15.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .userstone[data-id="1"] .userstone__pic {
   background-image: url(../img/sprite.png);
-  background-position: -410.5px -222.5px;
+  background-position: -323px -273px;
   width: 49.5px;
   height: 53px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .userstone[data-id="2"] {
   right: 10px;
   background-image: url(../img/sprite.png);
-  background-position: -642.5px -369px;
+  background-position: -549px -186px;
   width: 112px;
   height: 162.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .userstone[data-id="2"] .userstone__title {
   background-image: url(../img/sprite.png);
-  background-position: -642.5px -533.5px;
+  background-position: -374.5px -273px;
   width: 48.5px;
   height: 15.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .userstone[data-id="2"] .userstone__pic {
   background-image: url(../img/sprite.png);
-  background-position: -359px -222.5px;
+  background-position: -271.5px -273px;
   width: 49.5px;
   height: 53.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 
 .userstone {
@@ -508,11 +508,23 @@ body {
   left: 0;
   right: 0;
   background-image: url(../img/sprite.png);
-  background-position: 0px 0px;
-  width: 357px;
-  height: 355.5px;
-  background-size: 774.5px 763px;
+  background-position: -271.5px -222.5px;
+  width: 235.5px;
+  height: 48.5px;
+  background-size: 676px 543.5px;
   margin: auto;
+}
+.penalty:before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 650px;
+  height: 650px;
+  background-color: rgba(255, 255, 255, 0.2);
+  -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  content: "";
 }
 .penalty.is_show {
   display: block;
@@ -542,24 +554,24 @@ body {
 }
 .countdown[data-id="1"] {
   background-image: url(../img/sprite.png);
-  background-position: 0px -579.5px;
+  background-position: -549px -350.5px;
   width: 97.5px;
   height: 183.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .countdown[data-id="2"] {
   background-image: url(../img/sprite.png);
-  background-position: -642.5px 0px;
+  background-position: 0px -362.5px;
   width: 132px;
   height: 181px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .countdown[data-id="3"] {
   background-image: url(../img/sprite.png);
-  background-position: -642.5px -183px;
+  background-position: -549px 0px;
   width: 127px;
   height: 184px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 
 .result {
@@ -574,18 +586,18 @@ body {
 .result[data-is-win="true"] {
   display: block;
   background-image: url(../img/sprite.png);
-  background-position: 0px -357.5px;
+  background-position: -283.5px 0px;
   width: 263.5px;
   height: 220px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .result[data-is-win="false"] {
   display: block;
   background-image: url(../img/sprite.png);
-  background-position: -359px 0px;
+  background-position: 0px 0px;
   width: 281.5px;
   height: 220.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 
 .retry {
@@ -596,10 +608,10 @@ body {
   right: 0;
   margin: auto;
   background-image: url(../img/sprite.png);
-  background-position: -265.5px -357.5px;
+  background-position: 0px -222.5px;
   width: 269.5px;
   height: 138px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
   cursor: pointer;
   opacity: 0;
   -webkit-transition: opacity 0.5s ease 0s;
