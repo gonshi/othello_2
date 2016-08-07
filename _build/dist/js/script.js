@@ -665,11 +665,7 @@ module.exports = function (_EventEmitter) {
 
             for (var i = 0; i < player_count.length; i++) {
                 if (player_count[i] === 0) {
-                    if (player_count[1] > player_count[2]) {
-                        this.emit('fin', 1);
-                    } else {
-                        this.emit('fin', 2);
-                    }
+                    this.emit('fin', player_count[1], player_count[2]);
                     this.releasePenalty('.penalty');
                     this.stopComputer();
                 }
@@ -885,6 +881,9 @@ var Main = function () {
         this.sound = new Sound();
 
         this.$retry = $('.retry');
+        this.$score = $('.score');
+        this.$score_player_1 = $('.score__player-1');
+        this.$score_player_2 = $('.score__player-2');
     }
 
     _createClass(Main, [{
@@ -924,8 +923,9 @@ var Main = function () {
                 }_this.sound.stop('penalty');
             });
 
-            this.gameModel.on('fin', function (winner_id) {
+            this.gameModel.on('fin', function (player_1_score, player_2_score) {
                 if (!player_id) player_id = 1; // when played with computer
+                var winner_id = player_1_score > player_2_score ? 1 : 2;
                 var is_win = winner_id === player_id;
                 _this.gameModel.pauseController();
                 _this.gameView.fin('.result', is_win);
@@ -934,6 +934,9 @@ var Main = function () {
 
                 setTimeout(function () {
                     _this.$retry.addClass('is_show');
+                    _this.$score.addClass('is_show');
+                    _this.$score_player_1.text(player_1_score);
+                    _this.$score_player_2.text(player_2_score);
                 }, 1000);
             });
 

@@ -211,12 +211,7 @@ module.exports = class GameModel extends EventEmitter{
 
         for(let i = 0; i < player_count.length; i++){
             if(player_count[i] === 0){
-                if(player_count[1] > player_count[2]){
-                    this.emit('fin', 1);
-                }
-                else{
-                    this.emit('fin', 2);
-                }
+                this.emit('fin', player_count[1], player_count[2]);
                 this.releasePenalty('.penalty');
                 this.stopComputer();
             }

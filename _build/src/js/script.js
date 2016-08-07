@@ -11,6 +11,9 @@ class Main{
         this.sound = new Sound();
 
         this.$retry = $('.retry');
+        this.$score = $('.score');
+        this.$score_player_1 = $('.score__player-1');
+        this.$score_player_2 = $('.score__player-2');
     }
 
     init(){
@@ -50,8 +53,9 @@ class Main{
             this.sound.stop('penalty');
         });
 
-        this.gameModel.on('fin', (winner_id) => {
+        this.gameModel.on('fin', (player_1_score, player_2_score) => {
             if(!player_id) player_id = 1; // when played with computer
+            let winner_id = player_1_score > player_2_score ? 1 : 2;
             let is_win = winner_id === player_id;
             this.gameModel.pauseController();
             this.gameView.fin('.result', is_win);
@@ -60,6 +64,9 @@ class Main{
 
             setTimeout(() => {
                 this.$retry.addClass('is_show');
+                this.$score.addClass('is_show');
+                this.$score_player_1.text(player_1_score);
+                this.$score_player_2.text(player_2_score);
             }, 1000);
         });
 

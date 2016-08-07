@@ -600,6 +600,45 @@ body {
   background-size: 676px 543.5px;
 }
 
+.score {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1em;
+  line-height: 1em;
+  margin: auto;
+  color: #FFFF00;
+  font-size: 64px;
+  font-family: 'Droid Serif';
+  text-align: center;
+  opacity: 0;
+  text-shadow: 2px 0px 0px #000, -1.74661px -0.97435px 0px #000, 1.05064px 1.70181px 0px #000, -0.08846px -1.99804px 0px #000, -0.89615px 1.78799px 0px #000, 1.65367px -1.12488px 0px #000, -1.99218px 0.17674px 0px #000, 1.82588px 0.81619px 0px #000, -1.19692px -1.60231px 0px #000, 0.26467px 1.98241px 0px #000, 0.73464px -1.86019px 0px #000, -1.5478px 1.26662px 0px #000, 1.96876px -0.35209px 0px #000, -1.89086px -0.65165px 0px #000, 1.33383px 1.49027px 0px #000, -0.43882px -1.95127px 0px #000, -0.56738px 1.91783px 0px #000;
+  -webkit-transform: translateY(150px);
+      -ms-transform: translateY(150px);
+          transform: translateY(150px);
+  -webkit-transition: opacity 0.5s;
+          transition: opacity 0.5s;
+}
+.score.is_show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.score__player-1 {
+  font-size: 80px;
+  color: #fff;
+  text-shadow: 2px 0px 0px #000, -1.74661px -0.97435px 0px #000, 1.05064px 1.70181px 0px #000, -0.08846px -1.99804px 0px #000, -0.89615px 1.78799px 0px #000, 1.65367px -1.12488px 0px #000, -1.99218px 0.17674px 0px #000, 1.82588px 0.81619px 0px #000, -1.19692px -1.60231px 0px #000, 0.26467px 1.98241px 0px #000, 0.73464px -1.86019px 0px #000, -1.5478px 1.26662px 0px #000, 1.96876px -0.35209px 0px #000, -1.89086px -0.65165px 0px #000, 1.33383px 1.49027px 0px #000, -0.43882px -1.95127px 0px #000, -0.56738px 1.91783px 0px #000;
+}
+
+.score__player-2 {
+  font-size: 80px;
+  color: #000;
+  text-shadow: 2px 0px 0px #fff, -1.74661px -0.97435px 0px #fff, 1.05064px 1.70181px 0px #fff, -0.08846px -1.99804px 0px #fff, -0.89615px 1.78799px 0px #fff, 1.65367px -1.12488px 0px #fff, -1.99218px 0.17674px 0px #fff, 1.82588px 0.81619px 0px #fff, -1.19692px -1.60231px 0px #fff, 0.26467px 1.98241px 0px #fff, 0.73464px -1.86019px 0px #fff, -1.5478px 1.26662px 0px #fff, 1.96876px -0.35209px 0px #fff, -1.89086px -0.65165px 0px #fff, 1.33383px 1.49027px 0px #fff, -0.43882px -1.95127px 0px #fff, -0.56738px 1.91783px 0px #fff;
+}
+
 .retry {
   visibility: hidden;
   position: absolute;
