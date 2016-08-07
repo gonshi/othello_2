@@ -130,7 +130,20 @@ module.exports = class GameModel extends EventEmitter{
             if(arg.event !== 'put' || arg.match_id !== match_id) return;
 
             let is_put_succeed = this.putStone(arg.x, arg.y, arg.player_id);
-            if(!is_put_succeed && arg.player_id === player_id) this.wait('.penalty', 2000);
+            if(!is_put_succeed && arg.player_id === player_id){
+                const MAX_WAIT = 3000;
+                let put_stone_count = 0;
+
+                for(let block_y = 0; block_y < _block_stones.length; block_y++){
+                    for(let block_x = 0; block_x < _block_stones.length; block_x++){
+                        if(_block_stones[block_y][block_x] !== 0){
+                            put_stone_count += 1;
+                        }
+                    }
+                }
+
+                this.wait('.penalty', put_stone_count / Math.pow(_block_stones.length, 2) * MAX_WAIT);
+            }
         });
 
         this.gameController.init();
