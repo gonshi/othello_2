@@ -509,6 +509,10 @@ function reverseStone(x, y, player) {
  * check if the stone will reverse opposites.
  */
 function updateStone(x, y, player) {
+    if (typeof _block_stones[y] === 'undefined' || typeof _block_stones[y][x] === 'undefined') {
+        return false;
+    }
+
     if (_block_stones[y][x] === 0 && reverseStone(x, y, player)) {
         _block_stones[y][x] = player;
         return true;
