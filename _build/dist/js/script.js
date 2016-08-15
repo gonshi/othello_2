@@ -442,7 +442,7 @@ var EventEmitter = require('eventemitter3');
 var GameController = require('../controller/GameController');
 var Milkcocoa = require('../module/Milkcocoa');
 
-var _origin_block_stones = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+var _origin_block_stones = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 1, 2, 0, 0], [0, 0, 2, 1, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
 
 var _block_stones = [];
 var _can_put = true;
@@ -1048,7 +1048,7 @@ module.exports = function () {
             this.stone_img.white.src = 'img/stone_white.png';
 
             this.board_img = new Image();
-            this.board_img.src = 'img/board_large.jpg';
+            this.board_img.src = 'img/board.jpg';
         }
 
         /**
@@ -1096,7 +1096,7 @@ module.exports = function () {
                     if (stone_img) {
                         var OFFSET = 10;
 
-                        this.game_context.drawImage(stone_img, x * (this.game_width - OFFSET * 2) / block_stones.length + OFFSET, y * (this.game_height - OFFSET * 2) / block_stones.length + OFFSET, stone_img.width / 2, stone_img.height / 2);
+                        this.game_context.drawImage(stone_img, x * (this.game_width - OFFSET * 2) / block_stones.length + OFFSET + 3, y * (this.game_height - OFFSET * 2) / block_stones.length + OFFSET + 3, stone_img.width / 2, stone_img.height / 2);
                     }
                 }
             }

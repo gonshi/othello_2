@@ -15,7 +15,7 @@ module.exports = class GameView{
         this.stone_img.white.src = 'img/stone_white.png';
 
         this.board_img = new Image();
-        this.board_img.src = 'img/board_large.jpg';
+        this.board_img.src = 'img/board.jpg';
     }
 
     /**
@@ -58,8 +58,8 @@ module.exports = class GameView{
                     const OFFSET = 10;
 
                     this.game_context.drawImage(stone_img,
-                        x * (this.game_width - OFFSET * 2) / block_stones.length + OFFSET,
-                        y * (this.game_height - OFFSET * 2) / block_stones.length + OFFSET,
+                        x * (this.game_width - OFFSET * 2) / block_stones.length + OFFSET + 3,
+                        y * (this.game_height - OFFSET * 2) / block_stones.length + OFFSET + 3,
                         stone_img.width / 2, stone_img.height / 2
                     );
                 }
