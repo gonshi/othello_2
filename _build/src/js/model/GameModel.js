@@ -40,12 +40,18 @@ function setOriginBlockStone(){
  *
  * check if the put position can be put, and if true, reverse the target stones.
  */
-function reverseStone(x, y, player){
+function reverseStone(x, y, player, is_exec /* optional */){
     const VECTOR = [
         [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1]
     ];
     var target = player === 1 ? 2 : 1;
     var is_reversed = false;
+
+    if(typeof _block_stones[y] === 'undefined' || typeof _block_stones[y][x] === 'undefined'){
+        return is_reversed;
+    }
+
+    if(_block_stones[y][x] !== 0) return is_reversed;
 
     for(var i = 0; i < VECTOR.length; i++){
         let _x = x + VECTOR[i][0];
@@ -59,42 +65,21 @@ function reverseStone(x, y, player){
         }
 
         if(reverse_count > 0 && _block_stones[_y] && _block_stones[_y][_x] === player){
-            let block_x = x + VECTOR[i][0];
-            let block_y = y + VECTOR[i][1];
+            if(is_exec){
+                let block_x = x;
+                let block_y = y;
 
-            for(let block_i = 0; block_i < reverse_count; block_i++){
-                _block_stones[block_y][block_x] = player;
-                block_x += VECTOR[i][0];
-                block_y += VECTOR[i][1];
+                for(let block_i = 0; block_i <= reverse_count; block_i++){
+                    _block_stones[block_y][block_x] = player;
+                    block_x += VECTOR[i][0];
+                    block_y += VECTOR[i][1];
+                }
             }
             is_reversed = true;
         }
     }
 
     return is_reversed;
-}
-
-/**
- * @param {x} int
- * @param {y} int
- * @param {player} int
- * @return {is_put_succeed} boolean
- *
- * check if the put position is empty, and if true,
- * check if the stone will reverse opposites.
- */
-function updateStone(x, y, player){
-    if(typeof _block_stones[y] === 'undefined' || typeof _block_stones[y][x] === 'undefined'){
-        return false;
-    }
-
-    if(_block_stones[y][x] === 0 && reverseStone(x, y, player)){
-        _block_stones[y][x] = player;
-        return true;
-    }
-    else{
-        return false;
-    }
 }
 
 module.exports = class GameModel extends EventEmitter{
@@ -133,8 +118,11 @@ module.exports = class GameModel extends EventEmitter{
         this.milkcocoa.on('send', (arg) => {
             if(arg.event !== 'put' || arg.match_id !== match_id) return;
 
-            let is_put_succeed = this.putStone(arg.x, arg.y, arg.player_id);
-            if(!is_put_succeed && arg.player_id === player_id){
+            if(reverseStone(put_block_position.x, put_block_position.y, COMPUTER_PLAYER_ID, true)){
+                this.checkFin();
+                this.emit('change', _block_stones);
+            }
+            else if(arg.player_id === player_id){ // penalty
                 const MAX_WAIT = 3000;
                 let put_stone_count = 0;
 
@@ -155,42 +143,40 @@ module.exports = class GameModel extends EventEmitter{
     }
 
     /**
-     * try to put stone on the x, y position.
-     */
-    putStone(x, y, player_id){
-        // check if the player can put on the block position
-        var is_put_succeed = updateStone(x, y, player_id);
-
-        if(is_put_succeed){
-            this.checkFin();
-            this.emit('change', _block_stones);
-        }
-        else{
-            this.emit('put');
-        }
-        return is_put_succeed;
-    }
-
-    /**
      * search put position automatically for computer.
      */
-    searchPut(){
-        var player_id = 2;
-        loop: for(let block_y = 0; block_y < _block_stones.length; block_y++){
+    searchPut(player_id){
+        for(let block_y = 0; block_y < _block_stones.length; block_y++){
             for(let block_x = 0; block_x < _block_stones.length; block_x++){
-                if(this.putStone(block_x, block_y, player_id)){
-                    break loop;
+                if(reverseStone(block_x, block_y, player_id)){
+                    return {
+                        x: block_x,
+                        y: block_y,
+                        player_id: player_id
+                    };
                 }
             }
         }
+
+        return false;
     }
 
     /**
      * init computer manipulation.
      */
     initComputer(){
+        const COMPUTER_PLAYER_ID = 2;
+
         this.computer_interval =
-            setInterval(() => {this.searchPut();}, 1000);
+            setInterval(() => {
+                let put_block_position = this.searchPut(COMPUTER_PLAYER_ID);
+
+                if(put_block_position){
+                    reverseStone(put_block_position.x, put_block_position.y, COMPUTER_PLAYER_ID, true);
+                    this.checkFin();
+                    this.emit('change', _block_stones);
+                }
+            }, 1000);
     }
 
     /**
@@ -205,20 +191,18 @@ module.exports = class GameModel extends EventEmitter{
      * emit fin event and send the winner id.
      */
     checkFin(){
-        var player_count = [0, 0, 0];
+        if(!this.searchPut(1) && !this.searchPut(2)){
+            var player_count = [0, 0, 0];
 
-        for(let block_y = 0; block_y < _block_stones.length; block_y++){
-            for(let block_x = 0; block_x < _block_stones.length; block_x++){
-                player_count[_block_stones[block_y][block_x]] += 1;
+            for(let block_y = 0; block_y < _block_stones.length; block_y++){
+                for(let block_x = 0; block_x < _block_stones.length; block_x++){
+                    player_count[_block_stones[block_y][block_x]] += 1;
+                }
             }
-        }
 
-        for(let i = 0; i < player_count.length; i++){
-            if(player_count[i] === 0){
-                this.emit('fin', player_count[1], player_count[2]);
-                this.releasePenalty('.penalty');
-                this.stopComputer();
-            }
+            this.emit('fin', player_count[1], player_count[2]);
+            this.releasePenalty('.penalty');
+            this.stopComputer();
         }
     }
 
