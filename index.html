@@ -17,6 +17,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="">
     <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://fonts.googleapis.com/css?family=Droid+Serif:700i" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
   </head>
   <body>
@@ -33,9 +34,16 @@
       <p class="penalty"></p>
       <p class="countdown"></p>
       <p class="result"></p>
+      <p class="score"><span class="score__player-1"></span> vs <span class="score__player-2"></span></p>
       <p class="retry"></p>
       <p class="qr"><img src="http://placehold.it/300x300" alt="QR"></p>
     </main>
+    <script>
+      if(location.search.match(/large/)){
+          window.large = true;
+          document.body.classList.add('is-large');
+      }
+    </script>
     <script src="./js/lib/boombox.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"></script>

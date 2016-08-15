@@ -423,46 +423,46 @@ body {
 .userstone[data-id="1"] {
   left: 10px;
   background-image: url(../img/sprite.png);
-  background-position: -99.5px -579.5px;
+  background-position: -134px -362.5px;
   width: 107px;
   height: 157.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .userstone[data-id="1"] .userstone__title {
   background-image: url(../img/sprite.png);
-  background-position: -693px -533.5px;
+  background-position: -425px -273px;
   width: 48.5px;
   height: 15.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .userstone[data-id="1"] .userstone__pic {
   background-image: url(../img/sprite.png);
-  background-position: -410.5px -222.5px;
+  background-position: -323px -273px;
   width: 49.5px;
   height: 53px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .userstone[data-id="2"] {
   right: 10px;
   background-image: url(../img/sprite.png);
-  background-position: -642.5px -369px;
+  background-position: -549px -186px;
   width: 112px;
   height: 162.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .userstone[data-id="2"] .userstone__title {
   background-image: url(../img/sprite.png);
-  background-position: -642.5px -533.5px;
+  background-position: -374.5px -273px;
   width: 48.5px;
   height: 15.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .userstone[data-id="2"] .userstone__pic {
   background-image: url(../img/sprite.png);
-  background-position: -359px -222.5px;
+  background-position: -271.5px -273px;
   width: 49.5px;
   height: 53.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 
 .userstone {
@@ -508,11 +508,23 @@ body {
   left: 0;
   right: 0;
   background-image: url(../img/sprite.png);
-  background-position: 0px 0px;
-  width: 357px;
-  height: 355.5px;
-  background-size: 774.5px 763px;
+  background-position: -271.5px -222.5px;
+  width: 235.5px;
+  height: 48.5px;
+  background-size: 676px 543.5px;
   margin: auto;
+}
+.penalty:before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 375px;
+  height: 375px;
+  background-color: rgba(255, 255, 255, 0.2);
+  -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  content: "";
 }
 .penalty.is_show {
   display: block;
@@ -542,24 +554,24 @@ body {
 }
 .countdown[data-id="1"] {
   background-image: url(../img/sprite.png);
-  background-position: 0px -579.5px;
+  background-position: -549px -350.5px;
   width: 97.5px;
   height: 183.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .countdown[data-id="2"] {
   background-image: url(../img/sprite.png);
-  background-position: -642.5px 0px;
+  background-position: 0px -362.5px;
   width: 132px;
   height: 181px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .countdown[data-id="3"] {
   background-image: url(../img/sprite.png);
-  background-position: -642.5px -183px;
+  background-position: -549px 0px;
   width: 127px;
   height: 184px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 
 .result {
@@ -574,18 +586,57 @@ body {
 .result[data-is-win="true"] {
   display: block;
   background-image: url(../img/sprite.png);
-  background-position: 0px -357.5px;
+  background-position: -283.5px 0px;
   width: 263.5px;
   height: 220px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
 }
 .result[data-is-win="false"] {
   display: block;
   background-image: url(../img/sprite.png);
-  background-position: -359px 0px;
+  background-position: 0px 0px;
   width: 281.5px;
   height: 220.5px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
+}
+
+.score {
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1em;
+  line-height: 1em;
+  margin: auto;
+  color: #FFFF00;
+  font-size: 64px;
+  font-family: 'Droid Serif';
+  text-align: center;
+  opacity: 0;
+  text-shadow: 2px 0px 0px #000, -1.74661px -0.97435px 0px #000, 1.05064px 1.70181px 0px #000, -0.08846px -1.99804px 0px #000, -0.89615px 1.78799px 0px #000, 1.65367px -1.12488px 0px #000, -1.99218px 0.17674px 0px #000, 1.82588px 0.81619px 0px #000, -1.19692px -1.60231px 0px #000, 0.26467px 1.98241px 0px #000, 0.73464px -1.86019px 0px #000, -1.5478px 1.26662px 0px #000, 1.96876px -0.35209px 0px #000, -1.89086px -0.65165px 0px #000, 1.33383px 1.49027px 0px #000, -0.43882px -1.95127px 0px #000, -0.56738px 1.91783px 0px #000;
+  -webkit-transform: translateY(150px);
+      -ms-transform: translateY(150px);
+          transform: translateY(150px);
+  -webkit-transition: opacity 0.5s;
+          transition: opacity 0.5s;
+}
+.score.is_show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.score__player-1 {
+  font-size: 80px;
+  color: #fff;
+  text-shadow: 2px 0px 0px #000, -1.74661px -0.97435px 0px #000, 1.05064px 1.70181px 0px #000, -0.08846px -1.99804px 0px #000, -0.89615px 1.78799px 0px #000, 1.65367px -1.12488px 0px #000, -1.99218px 0.17674px 0px #000, 1.82588px 0.81619px 0px #000, -1.19692px -1.60231px 0px #000, 0.26467px 1.98241px 0px #000, 0.73464px -1.86019px 0px #000, -1.5478px 1.26662px 0px #000, 1.96876px -0.35209px 0px #000, -1.89086px -0.65165px 0px #000, 1.33383px 1.49027px 0px #000, -0.43882px -1.95127px 0px #000, -0.56738px 1.91783px 0px #000;
+}
+
+.score__player-2 {
+  font-size: 80px;
+  color: #000;
+  text-shadow: 2px 0px 0px #fff, -1.74661px -0.97435px 0px #fff, 1.05064px 1.70181px 0px #fff, -0.08846px -1.99804px 0px #fff, -0.89615px 1.78799px 0px #fff, 1.65367px -1.12488px 0px #fff, -1.99218px 0.17674px 0px #fff, 1.82588px 0.81619px 0px #fff, -1.19692px -1.60231px 0px #fff, 0.26467px 1.98241px 0px #fff, 0.73464px -1.86019px 0px #fff, -1.5478px 1.26662px 0px #fff, 1.96876px -0.35209px 0px #fff, -1.89086px -0.65165px 0px #fff, 1.33383px 1.49027px 0px #fff, -0.43882px -1.95127px 0px #fff, -0.56738px 1.91783px 0px #fff;
 }
 
 .retry {
@@ -596,10 +647,10 @@ body {
   right: 0;
   margin: auto;
   background-image: url(../img/sprite.png);
-  background-position: -265.5px -357.5px;
+  background-position: 0px -222.5px;
   width: 269.5px;
   height: 138px;
-  background-size: 774.5px 763px;
+  background-size: 676px 543.5px;
   cursor: pointer;
   opacity: 0;
   -webkit-transition: opacity 0.5s ease 0s;
@@ -643,6 +694,15 @@ body {
   -webkit-transform: translate(-50%, -50%);
       -ms-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);
+}
+
+body.is-large .game {
+  width: 650px;
+  height: 650px;
+}
+body.is-large .penalty:before {
+  width: 650px;
+  height: 650px;
 }
 
 @media print {
