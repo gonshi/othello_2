@@ -221,3 +221,17 @@ body{
         transform: translate(-50%, -50%);
     }
 }
+
+body.is-large{
+    .game{
+        width: 650px;
+        height: 650px;
+    }
+
+    .penalty{
+        &:before{
+            width: 650px;
+            height: 650px;
+        }
+    }
+}

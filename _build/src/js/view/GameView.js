@@ -16,6 +16,10 @@ module.exports = class GameView{
 
         this.board_img = new Image();
         this.board_img.src = 'img/board.jpg';
+
+        if(window.large){
+            this.board_img.src = 'img/board_large.jpg';
+        }
     }
 
     /**
@@ -55,11 +59,11 @@ module.exports = class GameView{
                         break;
                 }
                 if(stone_img){
-                    const OFFSET = 10;
+                    const OFFSET = window.large ? 10 : 13;
 
                     this.game_context.drawImage(stone_img,
-                        x * (this.game_width - OFFSET * 2) / block_stones.length + OFFSET + 3,
-                        y * (this.game_height - OFFSET * 2) / block_stones.length + OFFSET + 3,
+                        x * (this.game_width - OFFSET * 2) / block_stones.length + OFFSET,
+                        y * (this.game_height - OFFSET * 2) / block_stones.length + OFFSET,
                         stone_img.width / 2, stone_img.height / 2
                     );
                 }

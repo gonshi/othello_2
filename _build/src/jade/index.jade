@@ -36,6 +36,11 @@ html(lang="ja")
       p.retry
       p.qr
         img(src="http://placehold.it/300x300" alt="QR")
+    script.
+        if(location.search.match(/large/)){
+            window.large = true;
+            document.body.classList.add('is-large');
+        }
     script(src="./js/lib/boombox.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js")

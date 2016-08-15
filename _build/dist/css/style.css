@@ -696,6 +696,15 @@ body {
           transform: translate(-50%, -50%);
 }
 
+body.is-large .game {
+  width: 650px;
+  height: 650px;
+}
+body.is-large .penalty:before {
+  width: 650px;
+  height: 650px;
+}
+
 @media print {
   * {
     background: transparent !important;
