@@ -9,6 +9,11 @@ class Main{
         this.gameView = new GameView('.game');
         this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
         this.sound = new Sound();
+
+        this.$retry = $('.retry');
+        this.$score = $('.score');
+        this.$score_player_1 = $('.score__player-1');
+        this.$score_player_2 = $('.score__player-2');
     }
 
     init(){
@@ -48,16 +53,20 @@ class Main{
             this.sound.stop('penalty');
         });
 
-        this.gameModel.on('fin', (winner_id) => {
+        this.gameModel.on('fin', (player_1_score, player_2_score) => {
             if(!player_id) player_id = 1; // when played with computer
+            let winner_id = player_1_score > player_2_score ? 1 : 2;
             let is_win = winner_id === player_id;
             this.gameModel.pauseController();
             this.gameView.fin('.result', is_win);
             this.sound.stop('bgm');
             this.sound.play('result');
 
-            setTimeout(function(){
-                $('.retry').addClass('is_show');
+            setTimeout(() => {
+                this.$retry.addClass('is_show');
+                this.$score.addClass('is_show');
+                this.$score_player_1.text(player_1_score);
+                this.$score_player_2.text(player_2_score);
             }, 1000);
         });
 
@@ -99,10 +108,11 @@ class Main{
                     match_id: match_id,
                 });
             }
+
+            this.gameView.showUserstone('.userstone', player_id);
         });
 
-        $('.retry').on('click', () => {
-            $('.retry').removeClass('is_show');
+        this.$retry.on('click', () => {
             setTimeout(() => {
                 this.milkcocoa.send({
                     event: 'restart',
@@ -114,7 +124,6 @@ class Main{
         this.gameView.init();
         this.milkcocoa.init();
 
-        this.gameView.showUserstone('.userstone', player_id);
         this.gameModel.getBlockStones();
 
         this.sound.init();
@@ -123,6 +132,8 @@ class Main{
     }
 
     restart(){
+        this.$retry.removeClass('is_show');
+        this.$score.removeClass('is_show');
         this.gameView.reset('.result');
         this.gameView.countdown('.countdown', () => {
             if(!location.search.match('match')) this.gameModel.initComputer();

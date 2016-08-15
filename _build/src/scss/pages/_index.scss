@@ -79,8 +79,8 @@ body{
 
 .game{
     @include absolute(0, 0, 0, 0);
-    width: 375px;
-    height: 375px;
+    width: 650px;
+    height: 650px;
     margin: auto;
 }
 
@@ -89,6 +89,15 @@ body{
     @include absolute(0, 0, 0, 0);
     @include sprite-2x($penalty);
     margin: auto;
+
+    &:before{
+        @include absolute(50%, '', '', 50%);
+        width: 650px;
+        height: 650px;
+        background-color: rgba(#fff, 0.2);
+        transform: translate(-50%, -50%);
+        content: "";
+    }
 
     &.is_show{
         display: block;
@@ -138,6 +147,39 @@ body{
         display: block;
         @include sprite-2x($lose);
     }
+}
+
+.score{
+    visibility: hidden;
+    @include absolute(0, 0, 0, 0);
+    height: 1em;
+    line-height: 1em;
+    margin: auto;
+    color: #FFFF00;
+    font-size: 64px;
+    font-family: 'Droid Serif';
+    text-align: center;
+    opacity: 0;
+    @include open-face(#000, 1);
+    transform: translateY(150px);
+    transition: opacity 0.5s;
+
+    &.is_show{
+        visibility: visible;
+        opacity: 1;
+    }
+}
+
+.score__player-1{
+    font-size: 80px;
+    color: #fff;
+    @include open-face(#000, 1);
+}
+
+.score__player-2{
+    font-size: 80px;
+    color: #000;
+    @include open-face(#fff, 1);
 }
 
 .retry{
