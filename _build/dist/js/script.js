@@ -467,10 +467,16 @@ function setOriginBlockStone() {
  *
  * check if the put position can be put, and if true, reverse the target stones.
  */
-function reverseStone(x, y, player) {
+function reverseStone(x, y, player, is_exec /* optional */) {
     var VECTOR = [[1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1], [0, 1], [1, 1]];
     var target = player === 1 ? 2 : 1;
     var is_reversed = false;
+
+    if (typeof _block_stones[y] === 'undefined' || typeof _block_stones[y][x] === 'undefined') {
+        return is_reversed;
+    }
+
+    if (_block_stones[y][x] !== 0) return is_reversed;
 
     for (var i = 0; i < VECTOR.length; i++) {
         var _x = x + VECTOR[i][0];
@@ -484,41 +490,21 @@ function reverseStone(x, y, player) {
         }
 
         if (reverse_count > 0 && _block_stones[_y] && _block_stones[_y][_x] === player) {
-            var block_x = x + VECTOR[i][0];
-            var block_y = y + VECTOR[i][1];
+            if (is_exec) {
+                var block_x = x;
+                var block_y = y;
 
-            for (var block_i = 0; block_i < reverse_count; block_i++) {
-                _block_stones[block_y][block_x] = player;
-                block_x += VECTOR[i][0];
-                block_y += VECTOR[i][1];
+                for (var block_i = 0; block_i <= reverse_count; block_i++) {
+                    _block_stones[block_y][block_x] = player;
+                    block_x += VECTOR[i][0];
+                    block_y += VECTOR[i][1];
+                }
             }
             is_reversed = true;
         }
     }
 
     return is_reversed;
-}
-
-/**
- * @param {x} int
- * @param {y} int
- * @param {player} int
- * @return {is_put_succeed} boolean
- *
- * check if the put position is empty, and if true,
- * check if the stone will reverse opposites.
- */
-function updateStone(x, y, player) {
-    if (typeof _block_stones[y] === 'undefined' || typeof _block_stones[y][x] === 'undefined') {
-        return false;
-    }
-
-    if (_block_stones[y][x] === 0 && reverseStone(x, y, player)) {
-        _block_stones[y][x] = player;
-        return true;
-    } else {
-        return false;
-    }
 }
 
 module.exports = function (_EventEmitter) {
@@ -570,31 +556,28 @@ module.exports = function (_EventEmitter) {
             this.milkcocoa.on('send', function (arg) {
                 if (arg.event !== 'put' || arg.match_id !== match_id) return;
 
-                var is_put_succeed = _this2.putStone(arg.x, arg.y, arg.player_id);
-                if (!is_put_succeed && arg.player_id === player_id) _this2.wait('.penalty', 2000);
+                if (reverseStone(arg.x, arg.y, arg.player_id, true)) {
+                    _this2.checkFin();
+                    _this2.emit('change', _block_stones);
+                } else if (arg.player_id === player_id) {
+                    // penalty
+                    var MAX_WAIT = 3000;
+                    var put_stone_count = 0;
+
+                    for (var block_y = 0; block_y < _block_stones.length; block_y++) {
+                        for (var block_x = 0; block_x < _block_stones.length; block_x++) {
+                            if (_block_stones[block_y][block_x] !== 0) {
+                                put_stone_count += 1;
+                            }
+                        }
+                    }
+
+                    _this2.wait('.penalty', put_stone_count / Math.pow(_block_stones.length, 2) * MAX_WAIT);
+                }
             });
 
             this.gameController.init();
             this.milkcocoa.init();
-        }
-
-        /**
-         * try to put stone on the x, y position.
-         */
-
-    }, {
-        key: 'putStone',
-        value: function putStone(x, y, player_id) {
-            // check if the player can put on the block position
-            var is_put_succeed = updateStone(x, y, player_id);
-
-            if (is_put_succeed) {
-                this.checkFin();
-                this.emit('change', _block_stones);
-            } else {
-                this.emit('put');
-            }
-            return is_put_succeed;
         }
 
         /**
@@ -603,15 +586,20 @@ module.exports = function (_EventEmitter) {
 
     }, {
         key: 'searchPut',
-        value: function searchPut() {
-            var player_id = 2;
-            loop: for (var block_y = 0; block_y < _block_stones.length; block_y++) {
+        value: function searchPut(player_id) {
+            for (var block_y = 0; block_y < _block_stones.length; block_y++) {
                 for (var block_x = 0; block_x < _block_stones.length; block_x++) {
-                    if (this.putStone(block_x, block_y, player_id)) {
-                        break loop;
+                    if (reverseStone(block_x, block_y, player_id)) {
+                        return {
+                            x: block_x,
+                            y: block_y,
+                            player_id: player_id
+                        };
                     }
                 }
             }
+
+            return false;
         }
 
         /**
@@ -623,8 +611,16 @@ module.exports = function (_EventEmitter) {
         value: function initComputer() {
             var _this3 = this;
 
+            var COMPUTER_PLAYER_ID = 2;
+
             this.computer_interval = setInterval(function () {
-                _this3.searchPut();
+                var put_block_position = _this3.searchPut(COMPUTER_PLAYER_ID);
+
+                if (put_block_position) {
+                    reverseStone(put_block_position.x, put_block_position.y, COMPUTER_PLAYER_ID, true);
+                    _this3.checkFin();
+                    _this3.emit('change', _block_stones);
+                }
             }, 1000);
         }
 
@@ -646,24 +642,18 @@ module.exports = function (_EventEmitter) {
     }, {
         key: 'checkFin',
         value: function checkFin() {
-            var player_count = [0, 0, 0];
+            if (!this.searchPut(1) && !this.searchPut(2)) {
+                var player_count = [0, 0, 0];
 
-            for (var block_y = 0; block_y < _block_stones.length; block_y++) {
-                for (var block_x = 0; block_x < _block_stones.length; block_x++) {
-                    player_count[_block_stones[block_y][block_x]] += 1;
-                }
-            }
-
-            for (var i = 0; i < player_count.length; i++) {
-                if (player_count[i] === 0) {
-                    if (player_count[1] > player_count[2]) {
-                        this.emit('fin', 1);
-                    } else {
-                        this.emit('fin', 2);
+                for (var block_y = 0; block_y < _block_stones.length; block_y++) {
+                    for (var block_x = 0; block_x < _block_stones.length; block_x++) {
+                        player_count[_block_stones[block_y][block_x]] += 1;
                     }
-                    this.releasePenalty('.penalty');
-                    this.stopComputer();
                 }
+
+                this.emit('fin', player_count[1], player_count[2]);
+                this.releasePenalty('.penalty');
+                this.stopComputer();
             }
         }
 
@@ -874,6 +864,11 @@ var Main = function () {
         this.gameView = new GameView('.game');
         this.milkcocoa = new Milkcocoa('maxilep2vor', 'othello2');
         this.sound = new Sound();
+
+        this.$retry = $('.retry');
+        this.$score = $('.score');
+        this.$score_player_1 = $('.score__player-1');
+        this.$score_player_2 = $('.score__player-2');
     }
 
     _createClass(Main, [{
@@ -913,8 +908,9 @@ var Main = function () {
                 }_this.sound.stop('penalty');
             });
 
-            this.gameModel.on('fin', function (winner_id) {
+            this.gameModel.on('fin', function (player_1_score, player_2_score) {
                 if (!player_id) player_id = 1; // when played with computer
+                var winner_id = player_1_score > player_2_score ? 1 : 2;
                 var is_win = winner_id === player_id;
                 _this.gameModel.pauseController();
                 _this.gameView.fin('.result', is_win);
@@ -922,7 +918,10 @@ var Main = function () {
                 _this.sound.play('result');
 
                 setTimeout(function () {
-                    $('.retry').addClass('is_show');
+                    _this.$retry.addClass('is_show');
+                    _this.$score.addClass('is_show');
+                    _this.$score_player_1.text(player_1_score);
+                    _this.$score_player_2.text(player_2_score);
                 }, 1000);
             });
 
@@ -962,10 +961,11 @@ var Main = function () {
                         match_id: match_id
                     });
                 }
+
+                _this.gameView.showUserstone('.userstone', player_id);
             });
 
-            $('.retry').on('click', function () {
-                $('.retry').removeClass('is_show');
+            this.$retry.on('click', function () {
                 setTimeout(function () {
                     _this.milkcocoa.send({
                         event: 'restart',
@@ -977,7 +977,6 @@ var Main = function () {
             this.gameView.init();
             this.milkcocoa.init();
 
-            this.gameView.showUserstone('.userstone', player_id);
             this.gameModel.getBlockStones();
 
             this.sound.init();
@@ -991,6 +990,8 @@ var Main = function () {
         value: function restart() {
             var _this2 = this;
 
+            this.$retry.removeClass('is_show');
+            this.$score.removeClass('is_show');
             this.gameView.reset('.result');
             this.gameView.countdown('.countdown', function () {
                 if (!location.search.match('match')) _this2.gameModel.initComputer();
