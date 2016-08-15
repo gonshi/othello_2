@@ -1010,6 +1010,7 @@ var Main = function () {
             var _this2 = this;
 
             this.$retry.removeClass('is_show');
+            this.$score.removeClass('is_show');
             this.gameView.reset('.result');
             this.gameView.countdown('.countdown', function () {
                 if (!location.search.match('match')) _this2.gameModel.initComputer();

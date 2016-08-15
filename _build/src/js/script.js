@@ -133,6 +133,7 @@ class Main{
 
     restart(){
         this.$retry.removeClass('is_show');
+        this.$score.removeClass('is_show');
         this.gameView.reset('.result');
         this.gameView.countdown('.countdown', () => {
             if(!location.search.match('match')) this.gameModel.initComputer();
