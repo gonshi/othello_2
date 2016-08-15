@@ -112,7 +112,7 @@ module.exports = class GameModel extends EventEmitter{
         this.milkcocoa.on('send', (arg) => {
             if(arg.event !== 'put' || arg.match_id !== match_id) return;
 
-            if(reverseStone(put_block_position.x, put_block_position.y, COMPUTER_PLAYER_ID, true)){
+            if(reverseStone(arg.x, arg.y, arg.player_id, true)){
                 this.checkFin();
                 this.emit('change', _block_stones);
             }

@@ -556,7 +556,7 @@ module.exports = function (_EventEmitter) {
             this.milkcocoa.on('send', function (arg) {
                 if (arg.event !== 'put' || arg.match_id !== match_id) return;
 
-                if (reverseStone(put_block_position.x, put_block_position.y, COMPUTER_PLAYER_ID, true)) {
+                if (reverseStone(arg.x, arg.y, arg.player_id, true)) {
                     _this2.checkFin();
                     _this2.emit('change', _block_stones);
                 } else if (arg.player_id === player_id) {
