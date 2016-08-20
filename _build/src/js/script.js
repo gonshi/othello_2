@@ -20,6 +20,7 @@ class Main{
         var player_id;
         var match_id;
         var is_started = false;
+        var is_wait = false;
         const CHANGE_SOUND_SIZE = 3;
         const PUT_SOUND_SIZE = 4;
 
@@ -68,6 +69,7 @@ class Main{
                 this.$score.addClass('is_show');
                 this.$score_player_1.text(player_1_score);
                 this.$score_player_2.text(player_2_score);
+                is_wait = true;
             }, 1000);
         });
 
@@ -95,7 +97,8 @@ class Main{
         });
 
         this.milkcocoa.on('send', (arg) => {
-            if(arg.event !== 'restart' || arg.match_id !== match_id) return;
+            if(arg.event !== 'restart' || arg.match_id !== match_id || !is_wait) return;
+            is_wait = false;
             this.restart();
         });
 
