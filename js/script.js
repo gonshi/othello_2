@@ -883,6 +883,7 @@ var Main = function () {
             var player_id;
             var match_id;
             var is_started = false;
+            var is_wait = false;
             var CHANGE_SOUND_SIZE = 3;
             var PUT_SOUND_SIZE = 4;
 
@@ -927,6 +928,7 @@ var Main = function () {
                     _this.$score.addClass('is_show');
                     _this.$score_player_1.text(player_1_score);
                     _this.$score_player_2.text(player_2_score);
+                    is_wait = true;
                 }, 1000);
             });
 
@@ -954,7 +956,8 @@ var Main = function () {
             });
 
             this.milkcocoa.on('send', function (arg) {
-                if (arg.event !== 'restart' || arg.match_id !== match_id) return;
+                if (arg.event !== 'restart' || arg.match_id !== match_id || !is_wait) return;
+                is_wait = false;
                 _this.restart();
             });
 
