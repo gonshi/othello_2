@@ -882,6 +882,7 @@ var Main = function () {
 
             var player_id;
             var match_id;
+            var is_started = false;
             var CHANGE_SOUND_SIZE = 3;
             var PUT_SOUND_SIZE = 4;
 
@@ -930,13 +931,26 @@ var Main = function () {
             });
 
             this.milkcocoa.on('send', function (arg) {
-                if (arg.event !== 'start' || arg.match_id !== match_id) return;
+                if (arg.event !== 'start_success' || arg.match_id !== match_id) return;
                 _this.gameView.hideQR('.qr');
                 _this.gameView.countdown('.countdown', function () {
                     _this.gameModel.init(player_id, match_id);
                     _this.sound.playBGM();
                 });
                 _this.sound.play('countdown');
+            });
+
+            this.milkcocoa.on('send', function (arg) {
+                if (arg.event !== 'start' || arg.match_id !== match_id || is_started) return;
+
+                is_started = true;
+
+                if (player_id !== 2) {
+                    _this.milkcocoa.send({
+                        event: 'start_success',
+                        match_id: match_id
+                    });
+                }
             });
 
             this.milkcocoa.on('send', function (arg) {
@@ -1102,9 +1116,10 @@ module.exports = function () {
                             break;
                     }
                     if (stone_img) {
-                        var OFFSET = window.large ? 10 : 13;
+                        var PADDING = window.large ? 10 : 15;
+                        var OFFSET = window.large ? 10 : 18;
 
-                        this.game_context.drawImage(stone_img, x * (this.game_width - OFFSET * 2) / block_stones.length + OFFSET, y * (this.game_height - OFFSET * 2) / block_stones.length + OFFSET, stone_img.width / 2, stone_img.height / 2);
+                        this.game_context.drawImage(stone_img, x * (this.game_width - PADDING * 2) / block_stones.length + OFFSET, y * (this.game_height - PADDING * 2) / block_stones.length + OFFSET, stone_img.width / 2, stone_img.height / 2);
                     }
                 }
             }
