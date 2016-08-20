@@ -19,6 +19,7 @@ class Main{
     init(){
         var player_id;
         var match_id;
+        var is_started = false;
         const CHANGE_SOUND_SIZE = 3;
         const PUT_SOUND_SIZE = 4;
 
@@ -71,13 +72,26 @@ class Main{
         });
 
         this.milkcocoa.on('send', (arg) => {
-            if(arg.event !== 'start' || arg.match_id !== match_id) return;
+            if(arg.event !== 'start_success' || arg.match_id !== match_id) return;
             this.gameView.hideQR('.qr');
             this.gameView.countdown('.countdown', () => {
                 this.gameModel.init(player_id, match_id);
                 this.sound.playBGM();
             });
             this.sound.play('countdown');
+        });
+
+        this.milkcocoa.on('send', (arg) => {
+            if(arg.event !== 'start' || arg.match_id !== match_id || is_started) return;
+
+            is_started = true;
+
+            if(player_id !== 2){
+                this.milkcocoa.send({
+                    event: 'start_success',
+                    match_id: match_id
+                });
+            }
         });
 
         this.milkcocoa.on('send', (arg) => {

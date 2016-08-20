@@ -59,11 +59,12 @@ module.exports = class GameView{
                         break;
                 }
                 if(stone_img){
-                    const OFFSET = window.large ? 10 : 13;
+                    const PADDING = window.large ? 10 : 15;
+                    const OFFSET = window.large ? 10 : 18;
 
                     this.game_context.drawImage(stone_img,
-                        x * (this.game_width - OFFSET * 2) / block_stones.length + OFFSET,
-                        y * (this.game_height - OFFSET * 2) / block_stones.length + OFFSET,
+                        x * (this.game_width - PADDING * 2) / block_stones.length + OFFSET,
+                        y * (this.game_height - PADDING * 2) / block_stones.length + OFFSET,
                         stone_img.width / 2, stone_img.height / 2
                     );
                 }
